@@ -4,6 +4,7 @@ import static com.aqupd.teamping.TeamPing.coords;
 import static com.aqupd.teamping.listeners.EventListener.ticks;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -21,11 +22,11 @@ public class RenderPing {
 
   public static void render(DrawBlockHighlightEvent event){
     try {
-      GL11.glPushMatrix();
-      GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-      GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-      GL11.glEnable(GL11.GL_BLEND);
-      GL11.glDisable(GL11.GL_TEXTURE_2D);
+      GlStateManager.pushMatrix();
+      GlStateManager.pushAttrib();
+      GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+      GlStateManager.enableBlend();
+      GlStateManager.disableTexture2D();
 
       WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
       Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
@@ -51,29 +52,29 @@ public class RenderPing {
     } finally {
       WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
       renderer.setTranslation(0, 0, 0);
-      GL11.glEnable(GL11.GL_TEXTURE_2D);
-      GL11.glPopAttrib();
-      GL11.glPopMatrix();
+      GlStateManager.enableTexture2D();
+      GlStateManager.popAttrib();
+      GlStateManager.popMatrix();
     }
   }
   public static void drawOutline(AxisAlignedBB boundingBox, int red, int green, int blue, int alpha) {
     Tessellator tessellator = Tessellator.getInstance();
     WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-    worldrenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+    worldrenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
     worldrenderer.pos(boundingBox.minX, boundingBox.minY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
     worldrenderer.pos(boundingBox.maxX, boundingBox.minY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
     worldrenderer.pos(boundingBox.maxX, boundingBox.minY, boundingBox.maxZ).color(red, green, blue, alpha).endVertex();
     worldrenderer.pos(boundingBox.minX, boundingBox.minY, boundingBox.maxZ).color(red, green, blue, alpha).endVertex();
     worldrenderer.pos(boundingBox.minX, boundingBox.minY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
     tessellator.draw();
-    worldrenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
+    worldrenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
     worldrenderer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
     worldrenderer.pos(boundingBox.maxX, boundingBox.maxY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
     worldrenderer.pos(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ).color(red, green, blue, alpha).endVertex();
     worldrenderer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.maxZ).color(red, green, blue, alpha).endVertex();
     worldrenderer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
     tessellator.draw();
-    worldrenderer.begin(1, DefaultVertexFormats.POSITION_COLOR);
+    worldrenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
     worldrenderer.pos(boundingBox.minX, boundingBox.minY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
     worldrenderer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
     worldrenderer.pos(boundingBox.maxX, boundingBox.minY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
