@@ -1,0 +1,109 @@
+buildscript {
+    repositories {
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://repo.spongepowered.org/maven' }
+        maven { url 'https://maven.minecraftforge.net/' }
+    }
+
+    dependencies {
+        classpath "com.github.asbyth:ForgeGradle:6f53277"
+        classpath 'com.github.xcfrg:MixinGradle:0.6-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+version = "1.4"
+group = "com.aqupd"
+archivesBaseName = "teamping"
+String modid = "teamping"
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+compileJava.options.encoding = 'UTF-8'
+
+minecraft {
+    version = "1.8.9-11.15.1.2318-1.8.9"
+    runDir = "run"
+    mappings = "stable_22"
+    makeObfSourceJar = false
+}
+
+configurations {
+    include
+    implementation.extendsFrom(include)
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
+    maven { url 'https://maven.minecraftforge.net/' }
+}
+
+dependencies {
+    include("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
+        exclude module: "guava"
+        exclude module: "commons-io"
+        exclude module: "gson"
+        exclude module: "launchwrapper"
+    }
+    annotationProcessor "org.spongepowered:mixin:0.7.11-SNAPSHOT"
+}
+
+reobf {
+    shadowJar {
+        classpath = sourceSets.main.compileClasspath
+    }
+}
+
+mixin {
+    add sourceSets.main, "mixins.${modid}.refmap.json"
+}
+
+
+shadowJar {
+    archiveFileName = jar.archiveFileName
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    configurations = [project.configurations.include]
+}
+
+jar {
+    manifest.attributes(
+            "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+            "MixinConfigs": "mixins.${modid}.json",
+            "FMLCorePluginContainsFMLMod": true,
+            "ForceLoadAsMod": true
+    )
+
+    enabled = false
+}
+
+tasks.reobfJar.dependsOn(tasks.shadowJar)
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+task moveResources {
+    doLast {
+        ant.move file: "${buildDir}/resources/main",
+                todir: "${buildDir}/classes/java"
+    }
+}
+
+moveResources.dependsOn processResources
+classes.dependsOn moveResources

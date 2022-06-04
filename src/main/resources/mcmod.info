@@ -1,0 +1,17 @@
+[
+  {
+    "modid": "teamping",
+    "name": "TeamPing",
+    "description": "Ping mod like in Portal 2/other multiplayer games.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://github.com/AquUpd",
+    "updateUrl": "",
+    "authorList": [
+      "Aqua_tic(AqUpd)"
+    ],
+    "credits": "nekoli",
+    "logoFile": "icon.png",
+    "dependencies": []
+  }
+]
