@@ -6,7 +6,7 @@ import com.aqupd.teamping.gui.GuiConfig;
 import com.aqupd.teamping.setup.Registrations;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -36,7 +36,7 @@ public class EventListener {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void onHighlight(DrawBlockHighlightEvent event){
+	public void onHighlight(RenderWorldLastEvent event){
 		if(mc.theWorld != null) RenderPing.render(event);
 	}
 }

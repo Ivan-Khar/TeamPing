@@ -13,6 +13,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -20,10 +21,11 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public class RenderPing {
 
-  public static void render(DrawBlockHighlightEvent event){
+  public static void render(RenderWorldLastEvent event){
     try {
       GlStateManager.pushMatrix();
-      GlStateManager.pushAttrib();
+      GlStateManager.disableLighting();
+      GlStateManager.disableDepth();
       GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
       GlStateManager.enableBlend();
       GlStateManager.disableTexture2D();
@@ -53,6 +55,8 @@ public class RenderPing {
       WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
       renderer.setTranslation(0, 0, 0);
       GlStateManager.enableTexture2D();
+      GlStateManager.enableDepth();
+      GlStateManager.enableLighting();
       GlStateManager.popAttrib();
       GlStateManager.popMatrix();
     }
