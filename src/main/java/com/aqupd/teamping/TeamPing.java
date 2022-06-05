@@ -48,15 +48,17 @@ public class TeamPing {
 	public static void getBlock(){
 		JsonObject data = new JsonObject();
 		int distance = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
-		if((Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16 > 64)) distance = 64;
+		if((Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16 > 128)) distance = 128;
 		BlockPos bp = mc.thePlayer.rayTrace(distance, ticks).getBlockPos();
 		JsonArray block = new JsonArray();
 		block.add(new JsonPrimitive(bp.getX()));
 		block.add(new JsonPrimitive(bp.getY()));
 		block.add(new JsonPrimitive(bp.getZ()));
 
+		int faketime = 255 + 255 + 500;
+
 		data.add("bp", block);
-		data.add("lifetime", new JsonPrimitive(255));
+		data.add("lifetime", new JsonPrimitive(faketime));
 		data.add("uuid", new JsonPrimitive(UUID.randomUUID().toString()));
 		pings.add(data);
 	}

@@ -4,7 +4,6 @@ import static com.aqupd.teamping.TeamPing.pings;
 import static com.aqupd.teamping.listeners.EventListener.ticks;
 
 import com.google.gson.*;
-import java.util.HashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -17,7 +16,6 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
-import scala.util.parsing.json.JSONObject;
 
 @SideOnly(Side.CLIENT)
 public class RenderPing {
@@ -46,18 +44,23 @@ public class RenderPing {
 
             GL11.glLineWidth(10 / distanceTo(entity, bp, ticks));
             AxisAlignedBB aabb = new AxisAlignedBB(bp, bp.add(1, 1, 1));
+            int lifetime = data.get("lifetime").getAsInt();
+            int trpy;
+            if (lifetime >= (500 + 255)){
+              trpy = (500+255+255)-lifetime;
+            } else {
+              trpy = Math.min(lifetime, 255);
+            }
 
-            drawOutline(aabb.expand(0.005, 0.005, 0.005), 0, 255, 255, data.get("lifetime").getAsInt());
-            drawBox(aabb.expand(0.0025, 0.0025, 0.0025), 0, 255, 255, data.get("lifetime").getAsInt());
+            drawOutline(aabb.expand(0.005, 0.005, 0.005), 0, 255, 255, trpy);
+            drawBox(aabb.expand(0.0025, 0.0025, 0.0025), 0, 255, 255, trpy/2);
           }
-          int lifetime = data.get("lifetime").getAsInt() - 1;
-          data.remove("lifetime");
-          data.addProperty("lifetime", lifetime);
-          if (lifetime == 0) {
+          int lifetime = data.get("lifetime").getAsInt();
+          if (lifetime <= 0) {
             pings.remove(je);
           }
         }
-        System.out.println(pings);
+        //System.out.println(pings);
       }
     } catch(Exception e) {
       WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
@@ -150,7 +153,12 @@ public class RenderPing {
     tessellator.draw();
   }
 
-  public static float distanceTo (Entity e, BlockPos bp,float ticks) {
+  public static float distanceTo(Entity e, BlockPos bp,float ticks) {
     return (float) Math.sqrt(Math.pow(e.getPositionEyes(ticks).xCoord - bp.getX(), 2) + Math.pow(e.getPositionEyes(ticks).yCoord - bp.getY(), 2) + Math.pow(e.getPositionEyes(ticks).zCoord - bp.getZ(), 2));
+  }
+
+  private static long map(long x, long in_min, long in_max, long out_min, long out_max)
+  {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
   }
 }

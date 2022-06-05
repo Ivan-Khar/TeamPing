@@ -43,4 +43,14 @@ public class EventListener {
 	public void onHighlight(DrawBlockHighlightEvent event){
 		if(mc.theWorld != null) RenderPing.render(event);
 	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		for (JsonElement je: pings) {
+			JsonObject data = je.getAsJsonObject();
+			int lifetime = data.get("lifetime").getAsInt() - 1;
+			data.addProperty("lifetime", lifetime);
+		}
+	}
 }
