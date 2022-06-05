@@ -1,8 +1,10 @@
 package com.aqupd.teamping.client;
 
-import static com.aqupd.teamping.TeamPing.coords;
+import static com.aqupd.teamping.TeamPing.pings;
 import static com.aqupd.teamping.listeners.EventListener.ticks;
 
+import com.google.gson.*;
+import java.util.HashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -11,42 +13,53 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import scala.util.parsing.json.JSONObject;
 
 @SideOnly(Side.CLIENT)
 public class RenderPing {
 
-  public static void render(RenderWorldLastEvent event){
+  public static void render(DrawBlockHighlightEvent event) {
     try {
       GlStateManager.pushMatrix();
-      GlStateManager.disableLighting();
-      GlStateManager.disableDepth();
+      GlStateManager.pushAttrib();
       GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
       GlStateManager.enableBlend();
+      GlStateManager.disableDepth();
       GlStateManager.disableTexture2D();
 
       WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
       Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+      if(pings.size() != 0) {
+        for (JsonElement je : pings) {
+          JsonObject data = je.getAsJsonObject();
+          JsonArray block = data.get("bp").getAsJsonArray();
+          BlockPos bp = new BlockPos(block.get(0).getAsInt(), block.get(1).getAsInt(), block.get(2).getAsInt());
+          if (distanceTo(entity, bp, ticks) < Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16) {
+            double d0 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double) ticks;
+            double d1 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double) ticks;
+            double d2 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double) ticks;
+            renderer.setTranslation(-d0, -d1, -d2);
 
-      for(BlockPos bp: coords){
+            GL11.glLineWidth(10 / distanceTo(entity, bp, ticks));
+            AxisAlignedBB aabb = new AxisAlignedBB(bp, bp.add(1, 1, 1));
 
-        double d0 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double)ticks;
-        double d1 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double)ticks;
-        double d2 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double)ticks;
-        renderer.setTranslation(-d0, -d1, -d2);
-
-        GL11.glLineWidth(10/distanceTo(entity, bp, ticks));
-        AxisAlignedBB aabb = new AxisAlignedBB(bp, bp.add(1, 1, 1));
-
-        drawOutline(aabb.expand(0.005,0.005,0.005), 0, 255, 255, 255);
-        drawBox(aabb.expand(0.0025,0.0025,0.0025), 0, 255, 255, 63);
+            drawOutline(aabb.expand(0.005, 0.005, 0.005), 0, 255, 255, data.get("lifetime").getAsInt());
+            drawBox(aabb.expand(0.0025, 0.0025, 0.0025), 0, 255, 255, data.get("lifetime").getAsInt());
+          }
+          int lifetime = data.get("lifetime").getAsInt() - 1;
+          data.remove("lifetime");
+          data.addProperty("lifetime", lifetime);
+          if (lifetime == 0) {
+            pings.remove(je);
+          }
+        }
+        System.out.println(pings);
       }
-    } catch (Exception e) {
+    } catch(Exception e) {
       WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
       try {
         renderer.finishDrawing();
@@ -56,12 +69,12 @@ public class RenderPing {
       renderer.setTranslation(0, 0, 0);
       GlStateManager.enableTexture2D();
       GlStateManager.enableDepth();
-      GlStateManager.enableLighting();
       GlStateManager.popAttrib();
       GlStateManager.popMatrix();
     }
   }
-  public static void drawOutline(AxisAlignedBB boundingBox, int red, int green, int blue, int alpha) {
+
+  public static void drawOutline(AxisAlignedBB boundingBox,int red, int green, int blue, int alpha) {
     Tessellator tessellator = Tessellator.getInstance();
     WorldRenderer worldrenderer = tessellator.getWorldRenderer();
     worldrenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
@@ -89,7 +102,8 @@ public class RenderPing {
     worldrenderer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.maxZ).color(red, green, blue, alpha).endVertex();
     tessellator.draw();
   }
-  public static void drawBox(AxisAlignedBB boundingBox, int red, int green, int blue, int alpha) {
+
+  public static void drawBox(AxisAlignedBB boundingBox,int red, int green, int blue, int alpha) {
     Tessellator tessellator = Tessellator.getInstance();
     WorldRenderer worldrenderer = tessellator.getWorldRenderer();
     //down
@@ -135,7 +149,8 @@ public class RenderPing {
     worldrenderer.pos(boundingBox.minX, boundingBox.maxY, boundingBox.maxZ).color(red, green, blue, alpha).endVertex();
     tessellator.draw();
   }
-  public static float distanceTo(Entity e, BlockPos bp, float ticks) {
+
+  public static float distanceTo (Entity e, BlockPos bp,float ticks) {
     return (float) Math.sqrt(Math.pow(e.getPositionEyes(ticks).xCoord - bp.getX(), 2) + Math.pow(e.getPositionEyes(ticks).yCoord - bp.getY(), 2) + Math.pow(e.getPositionEyes(ticks).zCoord - bp.getZ(), 2));
   }
 }
