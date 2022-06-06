@@ -53,7 +53,7 @@ public class EventListener {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+	public void onClientTick(TickEvent.ClientTickEvent event) {
 		for (JsonElement je: pings) {
 			JsonObject data = je.getAsJsonObject();
 			int lifetime = data.get("lifetime").getAsInt() - 1;

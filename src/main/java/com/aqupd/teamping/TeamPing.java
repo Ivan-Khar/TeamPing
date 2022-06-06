@@ -55,7 +55,7 @@ public class TeamPing {
 		block.add(new JsonPrimitive(bp.getY()));
 		block.add(new JsonPrimitive(bp.getZ()));
 
-		int faketime = 255 * 2 + 500;
+		int faketime = 63 * 2 + 500;
 
 		data.add("bp", block);
 		data.add("lifetime", new JsonPrimitive(faketime));
