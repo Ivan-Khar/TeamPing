@@ -62,8 +62,8 @@ public class RenderPingInWorld {
               trpy = Math.min(lifetime, 63);
             }
 
-            drawOutline(aabb.expand(0.005, 0.005, 0.005), 0, 255, 255, trpy*4);
-            drawBox(aabb.expand(0.0025, 0.0025, 0.0025), 0, 255, 255, trpy/3);
+            //drawOutline(aabb.expand(0.005, 0.005, 0.005), 0, 255, 255, trpy*4);
+            //drawBox(aabb.expand(0.0025, 0.0025, 0.0025), 0, 255, 255, trpy/3);
 
             float bx = block.get(0).getAsFloat() + 0.5F;
             float by = block.get(1).getAsFloat() + 0.5F;
@@ -184,9 +184,9 @@ public class RenderPingInWorld {
     float rXY = ActiveRenderInfo.getRotationXY() * 0.5F;
     float rXZ = ActiveRenderInfo.getRotationXZ() * 0.5F;
 
+    /*
     GlStateManager.enableTexture2D();
     mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
-
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
     wr.pos(blockX - rX - rXY, blockY - rZ, blockZ - rYZ - rXZ).tex(maxU, maxV).color(255, 255, 255, transparency).endVertex();
     wr.pos(blockX - rX + rXY, blockY + rZ, blockZ - rYZ + rXZ).tex(maxU, minV).color(255, 255, 255, transparency).endVertex();
@@ -194,5 +194,17 @@ public class RenderPingInWorld {
     wr.pos(blockX + rX - rXY, blockY - rZ, blockZ + rYZ - rXZ).tex(minU, maxV).color(255, 255, 255, transparency).endVertex();
     tes.draw();
     GlStateManager.disableTexture2D();
+
+    */
+    wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+    wr.pos(blockX - rX - rXY, blockY - rZ, blockZ - rYZ - rXZ).color(255, 0, 0, 255).endVertex();
+    wr.pos(blockX - rX + rXY, blockY + rZ, blockZ - rYZ + rXZ).color(255, 0, 0, 255).endVertex();
+    wr.pos(blockX - rX + rXY, blockY + rZ, blockZ - rYZ + rXZ).color(0, 255, 0, 255).endVertex();
+    wr.pos(blockX + rX + rXY, blockY + rZ, blockZ + rYZ + rXZ).color(0, 255, 0, 255).endVertex();
+    wr.pos(blockX + rX + rXY, blockY + rZ, blockZ + rYZ + rXZ).color(0, 0, 255, 255).endVertex();
+    wr.pos(blockX + rX - rXY, blockY - rZ, blockZ + rYZ - rXZ).color(0, 0, 255, 255).endVertex();
+    wr.pos(blockX + rX - rXY, blockY - rZ, blockZ + rYZ - rXZ).color(0, 0, 255, 255).endVertex();
+    wr.pos(blockX - rX - rXY, blockY - rZ, blockZ - rYZ - rXZ).color(255, 255, 0, 255).endVertex();
+    tes.draw();
   }
 }
