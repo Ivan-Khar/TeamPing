@@ -45,7 +45,7 @@ public class TeamPing {
 		MinecraftForge.EVENT_BUS.register(eventListener);
 	}
 
-	public static void getBlock(){
+	public static void pingBlock(String type){
 		JsonObject data = new JsonObject();
 		int distance = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
 		if((Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16 > 128)) distance = 128;
@@ -59,6 +59,7 @@ public class TeamPing {
 
 		data.add("bp", block);
 		data.add("lifetime", new JsonPrimitive(faketime));
+		data.add("type", new JsonPrimitive(type));
 		data.add("uuid", new JsonPrimitive(UUID.randomUUID().toString()));
 		pings.add(data);
 	}
