@@ -69,7 +69,7 @@ public class RenderPingInWorld {
             float bz = block.get(2).getAsFloat() + 0.5F;
 
             wr.setTranslation(d0 + bx, d1 + by, d2 + bz);
-            renderPing(mc, wr, e, 0, 0.5);
+            renderPing(mc, wr, e, 0, 0.5, 0, 0.5);
 
           }
           int lifetime = data.get("lifetime").getAsInt();
@@ -170,7 +170,7 @@ public class RenderPingInWorld {
     tessellator.draw();
   }
 
-  public static void renderPing(Minecraft mc, WorldRenderer wr, Entity e, double u, double v)
+  public static void renderPing(Minecraft mc, WorldRenderer wr, Entity e, double minU, double maxU, double minV, double maxV)
   {
     Tessellator tes = Tessellator.getInstance();
 
@@ -194,10 +194,10 @@ public class RenderPingInWorld {
     mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
 
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-    wr.pos(f5 - rX * 0.5F - rXY * 0.5F, f6 - rZ * 0.5F, f7 - rYZ * 0.5F - rXZ * 0.5F).tex(u, v).color(255, 255, 255, 255).endVertex();
-    wr.pos(f5 - rX * 0.5F + rXY * 0.5F, f6 + rZ * 0.5F, f7 - rYZ * 0.5F + rXZ * 0.5F).tex(u, u).color(255, 255, 255, 255).endVertex();
-    wr.pos(f5 + rX * 0.5F + rXY * 0.5F, f6 + rZ * 0.5F, f7 + rYZ * 0.5F + rXZ * 0.5F).tex(v, u).color(255, 255, 255, 255).endVertex();
-    wr.pos(f5 + rX * 0.5F - rXY * 0.5F, f6 - rZ * 0.5F, f7 + rYZ * 0.5F - rXZ * 0.5F).tex(v, v).color(255, 255, 255, 255).endVertex();
+    wr.pos(f5 - rX * 0.5F - rXY * 0.5F, f6 - rZ * 0.5F, f7 - rYZ * 0.5F - rXZ * 0.5F).tex(maxU, maxV).color(255, 255, 255, 255).endVertex();
+    wr.pos(f5 - rX * 0.5F + rXY * 0.5F, f6 + rZ * 0.5F, f7 - rYZ * 0.5F + rXZ * 0.5F).tex(maxU, minV).color(255, 255, 255, 255).endVertex();
+    wr.pos(f5 + rX * 0.5F + rXY * 0.5F, f6 + rZ * 0.5F, f7 + rYZ * 0.5F + rXZ * 0.5F).tex(minU, minV).color(255, 255, 255, 255).endVertex();
+    wr.pos(f5 + rX * 0.5F - rXY * 0.5F, f6 - rZ * 0.5F, f7 + rYZ * 0.5F - rXZ * 0.5F).tex(minU, maxV).color(255, 255, 255, 255).endVertex();
     tes.draw();
     GlStateManager.disableTexture2D();
   }
