@@ -4,7 +4,6 @@ import static com.aqupd.teamping.TeamPing.MOD_ID;
 import static com.aqupd.teamping.TeamPing.pings;
 import static com.aqupd.teamping.listeners.EventListener.ticks;
 import static com.aqupd.teamping.util.UtilMethods.distanceTo;
-import static net.minecraft.client.particle.EntityFX.*;
 
 import com.google.gson.*;
 import net.minecraft.client.Minecraft;
@@ -16,6 +15,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -181,11 +181,15 @@ public class RenderPingInWorld {
     float f6 = (float)(e.prevPosY + (e.posY - e.prevPosY) * (double)ticks - iPY);
     float f7 = (float)(e.prevPosZ + (e.posZ - e.prevPosZ) * (double)ticks - iPZ);
 
-    float rZ = ActiveRenderInfo.getRotationX();
-    float rX = ActiveRenderInfo.getRotationZ();
-    float rXY = ActiveRenderInfo.getRotationXY();
-    float rXZ = ActiveRenderInfo.getRotationXZ();
-    float rYZ = ActiveRenderInfo.getRotationYZ();
+    float f2 = e.rotationPitch;
+    float f3 = e.rotationYaw;
+
+    float rX = MathHelper.cos(f3 * (float)Math.PI / 180.0F) * (float)(1 - 2);
+    float rZ = MathHelper.sin(f3 * (float)Math.PI / 180.0F) * (float)(1 - 2);
+    float rYZ = -rZ * MathHelper.sin(f2 * (float)Math.PI / 180.0F) * (float)(1 - 2);
+    float rXY = rX * MathHelper.sin(f2 * (float)Math.PI / 180.0F) * (float)(1 - 2);
+    float rXZ = MathHelper.cos(f2 * (float)Math.PI / 180.0F);
+
     GlStateManager.enableTexture2D();
     mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
 
