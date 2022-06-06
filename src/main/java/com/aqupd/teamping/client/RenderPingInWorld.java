@@ -4,6 +4,7 @@ import static com.aqupd.teamping.TeamPing.MOD_ID;
 import static com.aqupd.teamping.TeamPing.pings;
 import static com.aqupd.teamping.listeners.EventListener.ticks;
 import static com.aqupd.teamping.util.UtilMethods.distanceTo;
+import static net.minecraft.client.particle.EntityFX.*;
 
 import com.google.gson.*;
 import net.minecraft.client.Minecraft;
@@ -46,10 +47,10 @@ public class RenderPingInWorld {
           BlockPos bp = new BlockPos(block.get(0).getAsInt(), block.get(1).getAsInt(), block.get(2).getAsInt());
 
           if (distanceTo(e, bp, ticks) < Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16) {
-            double d0 = -(e.lastTickPosX + (e.posX - e.lastTickPosX) * (double) ticks);
-            double d1 = -(e.lastTickPosY + (e.posY - e.lastTickPosY) * (double) ticks);
-            double d2 = -(e.lastTickPosZ + (e.posZ - e.lastTickPosZ) * (double) ticks);
-            wr.setTranslation(d0, d1, d2);
+            double iPX = -interpPosX;
+            double iPY = -interpPosY;
+            double iPZ = -interpPosZ;
+            wr.setTranslation(iPX, iPY,iPZ);
 
             GL11.glLineWidth(10 / distanceTo(e, bp, ticks));
             AxisAlignedBB aabb = new AxisAlignedBB(bp, bp.add(1, 1, 1));
@@ -68,8 +69,8 @@ public class RenderPingInWorld {
             float by = block.get(1).getAsFloat() + 0.5F;
             float bz = block.get(2).getAsFloat() + 0.5F;
 
-            wr.setTranslation(d0 + bx, d1 + by, d2 + bz);
-            renderPing(mc, wr, e, 0, 0.5, 0, 0.5);
+            wr.setTranslation(iPX + bx, iPY + by, iPZ + bz);
+            renderPing(mc, wr, e, Math.min(trpy*8, 255), 0, 0.5, 0, 0.5);
 
           }
           int lifetime = data.get("lifetime").getAsInt();
@@ -170,34 +171,27 @@ public class RenderPingInWorld {
     tessellator.draw();
   }
 
-  public static void renderPing(Minecraft mc, WorldRenderer wr, Entity e, double minU, double maxU, double minV, double maxV)
+  public static void renderPing(Minecraft mc, WorldRenderer wr, Entity e, int transparency, double minU, double maxU, double minV, double maxV)
   {
     Tessellator tes = Tessellator.getInstance();
-
-    double interpPosX = e.lastTickPosX + (e.posX - e.lastTickPosX) * (double)ticks;
-    double interpPosY = e.lastTickPosY + (e.posY - e.lastTickPosY) * (double)ticks;
-    double interpPosZ = e.lastTickPosZ + (e.posZ - e.lastTickPosZ) * (double)ticks;
     float f5 = (float)(e.prevPosX + (e.posX - e.prevPosX) * (double)ticks - interpPosX);
     float f6 = (float)(e.prevPosY + (e.posY - e.prevPosY) * (double)ticks - interpPosY);
     float f7 = (float)(e.prevPosZ + (e.posZ - e.prevPosZ) * (double)ticks - interpPosZ);
 
-    float pitch = e.rotationPitch;
-    float yaw = e.rotationYaw;
-
-    float rX = MathHelper.cos(yaw * (float)Math.PI / 180.0F) * (float)(1 - 2);
-    float rZ = MathHelper.sin(yaw * (float)Math.PI / 180.0F) * (float)(1 - 2);
-    float rYZ = -rZ * MathHelper.sin(pitch * (float)Math.PI / 180.0F) * (float)(1 - 2);
-    float rXY = rX * MathHelper.sin(pitch * (float)Math.PI / 180.0F) * (float)(1 - 2);
-    float rXZ = MathHelper.cos(pitch * (float)Math.PI / 180.0F);
+    float rX = ActiveRenderInfo.getRotationX();
+    float rZ = ActiveRenderInfo.getRotationZ();
+    float rYZ = ActiveRenderInfo.getRotationYZ();
+    float rXY = ActiveRenderInfo.getRotationXY();
+    float rXZ = ActiveRenderInfo.getRotationXZ();
 
     GlStateManager.enableTexture2D();
     mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
 
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-    wr.pos(f5 - rX * 0.5F - rXY * 0.5F, f6 - rZ * 0.5F, f7 - rYZ * 0.5F - rXZ * 0.5F).tex(maxU, maxV).color(255, 255, 255, 255).endVertex();
-    wr.pos(f5 - rX * 0.5F + rXY * 0.5F, f6 + rZ * 0.5F, f7 - rYZ * 0.5F + rXZ * 0.5F).tex(maxU, minV).color(255, 255, 255, 255).endVertex();
-    wr.pos(f5 + rX * 0.5F + rXY * 0.5F, f6 + rZ * 0.5F, f7 + rYZ * 0.5F + rXZ * 0.5F).tex(minU, minV).color(255, 255, 255, 255).endVertex();
-    wr.pos(f5 + rX * 0.5F - rXY * 0.5F, f6 - rZ * 0.5F, f7 + rYZ * 0.5F - rXZ * 0.5F).tex(minU, maxV).color(255, 255, 255, 255).endVertex();
+    wr.pos(f5 - rX * 0.5F - rXY * 0.5F, f6 - rZ * 0.5F, f7 - rYZ * 0.5F - rXZ * 0.5F).tex(maxU, maxV).color(255, 255, 255, transparency).endVertex();
+    wr.pos(f5 - rX * 0.5F + rXY * 0.5F, f6 + rZ * 0.5F, f7 - rYZ * 0.5F + rXZ * 0.5F).tex(maxU, minV).color(255, 255, 255, transparency).endVertex();
+    wr.pos(f5 + rX * 0.5F + rXY * 0.5F, f6 + rZ * 0.5F, f7 + rYZ * 0.5F + rXZ * 0.5F).tex(minU, minV).color(255, 255, 255, transparency).endVertex();
+    wr.pos(f5 + rX * 0.5F - rXY * 0.5F, f6 - rZ * 0.5F, f7 + rYZ * 0.5F - rXZ * 0.5F).tex(minU, maxV).color(255, 255, 255, transparency).endVertex();
     tes.draw();
     GlStateManager.disableTexture2D();
   }
