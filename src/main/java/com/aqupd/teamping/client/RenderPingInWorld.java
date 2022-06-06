@@ -4,9 +4,11 @@ import static com.aqupd.teamping.TeamPing.MOD_ID;
 import static com.aqupd.teamping.TeamPing.pings;
 import static com.aqupd.teamping.listeners.EventListener.ticks;
 import static com.aqupd.teamping.util.UtilMethods.distanceTo;
+import static net.minecraft.client.particle.EntityFX.*;
 
 import com.google.gson.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -35,7 +37,7 @@ public class RenderPingInWorld {
       Minecraft mc = Minecraft.getMinecraft();
       Tessellator tes = Tessellator.getInstance();
       WorldRenderer wr = tes.getWorldRenderer();
-      Entity entity = mc.getRenderViewEntity();
+      Entity e = mc.getRenderViewEntity();
       if(pings.size() != 0) {
         for (JsonElement je : pings) {
           JsonObject data = je.getAsJsonObject();
@@ -43,13 +45,13 @@ public class RenderPingInWorld {
           String type = data.get("type").getAsString();
           BlockPos bp = new BlockPos(block.get(0).getAsInt(), block.get(1).getAsInt(), block.get(2).getAsInt());
 
-          if (distanceTo(entity, bp, ticks) < Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16) {
-            double d0 = -(entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double) ticks);
-            double d1 = -(entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double) ticks);
-            double d2 = -(entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double) ticks);
+          if (distanceTo(e, bp, ticks) < Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16) {
+            double d0 = -(e.lastTickPosX + (e.posX - e.lastTickPosX) * (double) ticks);
+            double d1 = -(e.lastTickPosY + (e.posY - e.lastTickPosY) * (double) ticks);
+            double d2 = -(e.lastTickPosZ + (e.posZ - e.lastTickPosZ) * (double) ticks);
             wr.setTranslation(d0, d1, d2);
 
-            GL11.glLineWidth(10 / distanceTo(entity, bp, ticks));
+            GL11.glLineWidth(10 / distanceTo(e, bp, ticks));
             AxisAlignedBB aabb = new AxisAlignedBB(bp, bp.add(1, 1, 1));
             int lifetime = data.get("lifetime").getAsInt();
             int trpy;
@@ -65,16 +67,10 @@ public class RenderPingInWorld {
             float bx = block.get(0).getAsFloat() + 0.5F;
             float by = block.get(1).getAsFloat() + 0.5F;
             float bz = block.get(2).getAsFloat() + 0.5F;
-            GlStateManager.enableTexture2D();
-            mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
+
             wr.setTranslation(d0 + bx, d1 + by, d2 + bz);
-            wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-            wr.pos(-0.5, 0.5, 0).tex(0, 0.5).color(255, 255, 255, 255).endVertex();
-            wr.pos(-0.5, -0.5, 0).tex(0, 0).color(255, 255, 255, 255).endVertex();
-            wr.pos(0.5, -0.5, 0).tex(0.5, 0).color(255, 255, 255, 255).endVertex();
-            wr.pos(0.5, 0.5, 0).tex(0.5, 0.5).color(255, 255, 255, 255).endVertex();
-            tes.draw();
-            GlStateManager.disableTexture2D();
+            renderPing(mc, wr, e, 0, 0.5);
+
           }
           int lifetime = data.get("lifetime").getAsInt();
           if (lifetime <= 0) {
@@ -172,5 +168,33 @@ public class RenderPingInWorld {
     wr.pos(boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ).color(red, green, blue, alpha).endVertex();
     wr.pos(boundingBox.minX, boundingBox.maxY, boundingBox.maxZ).color(red, green, blue, alpha).endVertex();
     tessellator.draw();
+  }
+
+  public static void renderPing(Minecraft mc, WorldRenderer wr, Entity e, double u, double v)
+  {
+    Tessellator tes = Tessellator.getInstance();
+
+    double iPX = e.lastTickPosX + (e.posX - e.lastTickPosX) * (double)ticks;
+    double iPY = e.lastTickPosY + (e.posY - e.lastTickPosY) * (double)ticks;
+    double iPZ = e.lastTickPosZ + (e.posZ - e.lastTickPosZ) * (double)ticks;
+    float f5 = (float)(e.prevPosX + (e.posX - e.prevPosX) * (double)ticks - iPX);
+    float f6 = (float)(e.prevPosY + (e.posY - e.prevPosY) * (double)ticks - iPY);
+    float f7 = (float)(e.prevPosZ + (e.posZ - e.prevPosZ) * (double)ticks - iPZ);
+
+    float rZ = ActiveRenderInfo.getRotationX();
+    float rX = ActiveRenderInfo.getRotationZ();
+    float rXY = ActiveRenderInfo.getRotationXY();
+    float rXZ = ActiveRenderInfo.getRotationXZ();
+    float rYZ = ActiveRenderInfo.getRotationYZ();
+    GlStateManager.enableTexture2D();
+    mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
+
+    wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+    wr.pos(f5 - rX * 0.5F - rXY * 0.5F, f6 - rZ * 0.5F, f7 - rYZ * 0.5F - rXZ * 0.5F).tex(u, v).color(255, 255, 255, 255).endVertex();
+    wr.pos(f5 - rX * 0.5F + rXY * 0.5F, f6 + rZ * 0.5F, f7 - rYZ * 0.5F + rXZ * 0.5F).tex(u, u).color(255, 255, 255, 255).endVertex();
+    wr.pos(f5 + rX * 0.5F + rXY * 0.5F, f6 + rZ * 0.5F, f7 + rYZ * 0.5F + rXZ * 0.5F).tex(v, u).color(255, 255, 255, 255).endVertex();
+    wr.pos(f5 + rX * 0.5F - rXY * 0.5F, f6 - rZ * 0.5F, f7 + rYZ * 0.5F - rXZ * 0.5F).tex(v, v).color(255, 255, 255, 255).endVertex();
+    tes.draw();
+    GlStateManager.disableTexture2D();
   }
 }
