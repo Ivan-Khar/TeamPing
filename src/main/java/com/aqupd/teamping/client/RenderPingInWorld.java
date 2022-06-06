@@ -174,21 +174,21 @@ public class RenderPingInWorld {
   {
     Tessellator tes = Tessellator.getInstance();
 
-    double iPX = e.lastTickPosX + (e.posX - e.lastTickPosX) * (double)ticks;
-    double iPY = e.lastTickPosY + (e.posY - e.lastTickPosY) * (double)ticks;
-    double iPZ = e.lastTickPosZ + (e.posZ - e.lastTickPosZ) * (double)ticks;
-    float f5 = (float)(e.prevPosX + (e.posX - e.prevPosX) * (double)ticks - iPX);
-    float f6 = (float)(e.prevPosY + (e.posY - e.prevPosY) * (double)ticks - iPY);
-    float f7 = (float)(e.prevPosZ + (e.posZ - e.prevPosZ) * (double)ticks - iPZ);
+    double interpPosX = e.lastTickPosX + (e.posX - e.lastTickPosX) * (double)ticks;
+    double interpPosY = e.lastTickPosY + (e.posY - e.lastTickPosY) * (double)ticks;
+    double interpPosZ = e.lastTickPosZ + (e.posZ - e.lastTickPosZ) * (double)ticks;
+    float f5 = (float)(e.prevPosX + (e.posX - e.prevPosX) * (double)ticks - interpPosX);
+    float f6 = (float)(e.prevPosY + (e.posY - e.prevPosY) * (double)ticks - interpPosY);
+    float f7 = (float)(e.prevPosZ + (e.posZ - e.prevPosZ) * (double)ticks - interpPosZ);
 
-    float f2 = e.rotationPitch;
-    float f3 = e.rotationYaw;
+    float pitch = e.rotationPitch;
+    float yaw = e.rotationYaw;
 
-    float rX = MathHelper.cos(f3 * (float)Math.PI / 180.0F) * (float)(1 - 2);
-    float rZ = MathHelper.sin(f3 * (float)Math.PI / 180.0F) * (float)(1 - 2);
-    float rYZ = -rZ * MathHelper.sin(f2 * (float)Math.PI / 180.0F) * (float)(1 - 2);
-    float rXY = rX * MathHelper.sin(f2 * (float)Math.PI / 180.0F) * (float)(1 - 2);
-    float rXZ = MathHelper.cos(f2 * (float)Math.PI / 180.0F);
+    float rX = MathHelper.cos(yaw * (float)Math.PI / 180.0F) * (float)(1 - 2);
+    float rZ = MathHelper.sin(yaw * (float)Math.PI / 180.0F) * (float)(1 - 2);
+    float rYZ = -rZ * MathHelper.sin(pitch * (float)Math.PI / 180.0F) * (float)(1 - 2);
+    float rXY = rX * MathHelper.sin(pitch * (float)Math.PI / 180.0F) * (float)(1 - 2);
+    float rXZ = MathHelper.cos(pitch * (float)Math.PI / 180.0F);
 
     GlStateManager.enableTexture2D();
     mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
