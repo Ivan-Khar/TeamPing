@@ -6,7 +6,9 @@ import static com.aqupd.teamping.listeners.EventListener.ticks;
 import static com.aqupd.teamping.util.UtilMethods.distanceTo;
 import static net.minecraft.client.particle.EntityFX.*;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,7 +18,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -174,37 +175,44 @@ public class RenderPingInWorld {
   public static void renderPing(Minecraft mc, WorldRenderer wr, Entity e, int transparency, double minU, double maxU, double minV, double maxV)
   {
     Tessellator tes = Tessellator.getInstance();
-    float blockX = (float)(e.prevPosX + (e.posX - e.prevPosX) * (double)ticks - interpPosX);
-    float blockY = (float)(e.prevPosY + (e.posY - e.prevPosY) * (double)ticks - interpPosY);
-    float blockZ = (float)(e.prevPosZ + (e.posZ - e.prevPosZ) * (double)ticks - interpPosZ);
-
     float rX = ActiveRenderInfo.getRotationX() * 0.5F;
-    float rZ = ActiveRenderInfo.getRotationZ() * 0.5F;
+    float rZ = -ActiveRenderInfo.getRotationZ() * 0.5F;
     float rYZ = ActiveRenderInfo.getRotationYZ() * 0.5F;
     float rXY = ActiveRenderInfo.getRotationXY() * 0.5F;
     float rXZ = ActiveRenderInfo.getRotationXZ() * 0.5F;
 
-    /*
+
+
     GlStateManager.enableTexture2D();
     mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-    wr.pos(blockX - rX - rXY, blockY - rZ, blockZ - rYZ - rXZ).tex(maxU, maxV).color(255, 255, 255, transparency).endVertex();
-    wr.pos(blockX - rX + rXY, blockY + rZ, blockZ - rYZ + rXZ).tex(maxU, minV).color(255, 255, 255, transparency).endVertex();
-    wr.pos(blockX + rX + rXY, blockY + rZ, blockZ + rYZ + rXZ).tex(minU, minV).color(255, 255, 255, transparency).endVertex();
-    wr.pos(blockX + rX - rXY, blockY - rZ, blockZ + rYZ - rXZ).tex(minU, maxV).color(255, 255, 255, transparency).endVertex();
+    wr.pos(-rX - rXY, -rZ, -rYZ - rXZ).tex(maxU, maxV).color(255, 255, 255, transparency).endVertex();
+    wr.pos(-rX + rXY, +rZ, -rYZ + rXZ).tex(maxU, minV).color(255, 255, 255, transparency).endVertex();
+    wr.pos(+rX + rXY, +rZ, +rYZ + rXZ).tex(minU, minV).color(255, 255, 255, transparency).endVertex();
+    wr.pos(+rX - rXY, -rZ, +rYZ - rXZ).tex(minU, maxV).color(255, 255, 255, transparency).endVertex();
     tes.draw();
     GlStateManager.disableTexture2D();
 
-    */
+    /*
+    System.out.println(""
+      + "Pitch: " + pitch + ", "
+      + "Yaw: " + yaw + ", "
+      + "rX: " + rX + ", "
+      + "rZ: " + rZ + ", "
+      + "rYZ: " + rYZ + ", "
+      + "rXY: " + rXY + ", "
+      + "rXZ: " + rXZ);
+
     wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-    wr.pos(blockX - rX - rXY, blockY - rZ, blockZ - rYZ - rXZ).color(255, 0, 0, 255).endVertex();
-    wr.pos(blockX - rX + rXY, blockY + rZ, blockZ - rYZ + rXZ).color(255, 0, 0, 255).endVertex();
-    wr.pos(blockX - rX + rXY, blockY + rZ, blockZ - rYZ + rXZ).color(0, 255, 0, 255).endVertex();
-    wr.pos(blockX + rX + rXY, blockY + rZ, blockZ + rYZ + rXZ).color(0, 255, 0, 255).endVertex();
-    wr.pos(blockX + rX + rXY, blockY + rZ, blockZ + rYZ + rXZ).color(0, 0, 255, 255).endVertex();
-    wr.pos(blockX + rX - rXY, blockY - rZ, blockZ + rYZ - rXZ).color(0, 0, 255, 255).endVertex();
-    wr.pos(blockX + rX - rXY, blockY - rZ, blockZ + rYZ - rXZ).color(0, 0, 255, 255).endVertex();
-    wr.pos(blockX - rX - rXY, blockY - rZ, blockZ - rYZ - rXZ).color(255, 255, 0, 255).endVertex();
+    wr.pos(-rX - rXY, -rZ, -rYZ - rXZ).color(255, 0, 0, 255).endVertex();
+    wr.pos(-rX + rXY, rZ, -rYZ + rXZ).color(255, 0, 0, 255).endVertex();
+    wr.pos(-rX + rXY, rZ, -rYZ + rXZ).color(0, 255, 0, 255).endVertex();
+    wr.pos(rX + rXY, rZ, rYZ + rXZ).color(0, 255, 0, 255).endVertex();
+    wr.pos(rX + rXY, rZ, rYZ + rXZ).color(0, 0, 255, 255).endVertex();
+    wr.pos(rX - rXY, -rZ, rYZ - rXZ).color(0, 0, 255, 255).endVertex();
+    wr.pos(rX - rXY, -rZ, rYZ - rXZ).color(0, 0, 255, 255).endVertex();
+    wr.pos(-rX - rXY, -rZ, -rYZ - rXZ).color(255, 255, 0, 255).endVertex();
     tes.draw();
+    */
   }
 }
