@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import java.awt.*;
 import java.io.IOException;
 import java.util.UUID;
 import javax.vecmath.Vector2d;
@@ -49,21 +50,28 @@ public class TeamPing {
 		MinecraftForge.EVENT_BUS.register(eventListener);
 	}
 
-	public static void pingBlock(String type){
+	public static void pingBlock(String type, Color color){
 		JsonObject data = new JsonObject();
 		int distance = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
 		if((Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16 > 128)) distance = 128;
 		BlockPos bp = mc.thePlayer.rayTrace(distance, ticks).getBlockPos();
-		JsonArray block = new JsonArray();
-		block.add(new JsonPrimitive(bp.getX()));
-		block.add(new JsonPrimitive(bp.getY()));
-		block.add(new JsonPrimitive(bp.getZ()));
+
+		JsonArray blockpos = new JsonArray();
+		blockpos.add(new JsonPrimitive(bp.getX()));
+		blockpos.add(new JsonPrimitive(bp.getY()));
+		blockpos.add(new JsonPrimitive(bp.getZ()));
+
+		JsonArray clr = new JsonArray();
+		clr.add(color.getRed());
+		clr.add(color.getGreen());
+		clr.add(color.getBlue());
 
 		int faketime = 63 * 2 + 500;
 
-		data.add("bp", block);
+		data.add("bp", blockpos);
 		data.add("lifetime", new JsonPrimitive(faketime));
 		data.add("type", new JsonPrimitive(type));
+		data.add("color", clr);
 		data.add("uuid", new JsonPrimitive(UUID.randomUUID().toString()));
 		pings.add(data);
 	}

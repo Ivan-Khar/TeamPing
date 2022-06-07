@@ -7,6 +7,7 @@ import com.aqupd.teamping.client.RenderPingInWorld;
 import com.aqupd.teamping.setup.Registrations;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.awt.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
@@ -32,9 +33,13 @@ public class EventListener {
 	@SubscribeEvent
 	public void onKeyPressed(KeyInputEvent event) {
 		if (Registrations.keyBindings[0].isPressed()) {
-			//Minecraft.getMinecraft().displayGuiScreen(new GuiConfig());
+			TeamPing.pingBlock("here", new Color(252, 216, 0));
 		} else if (Registrations.keyBindings[1].isPressed()) {
-			TeamPing.pingBlock("normal");
+			TeamPing.pingBlock("danger", new Color(255, 0, 0));
+		} else if (Registrations.keyBindings[2].isPressed()) {
+			TeamPing.pingBlock("question", new Color(0, 20, 255));
+		} else if (Registrations.keyBindings[3].isPressed()) {
+			TeamPing.pingBlock("no", new Color(35, 255, 0));
 		}
 	}
 
