@@ -4,7 +4,9 @@ import static com.aqupd.teamping.TeamPing.MOD_ID;
 import static com.aqupd.teamping.TeamPing.pings;
 import static com.aqupd.teamping.listeners.EventListener.ticks;
 import static com.aqupd.teamping.util.UtilMethods.distanceTo;
+import static java.lang.Math.*;
 import static net.minecraft.client.particle.EntityFX.*;
+import static net.minecraft.util.MathHelper.*;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -16,9 +18,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -62,7 +62,6 @@ public class RenderPingInWorld {
             } else {
               trpy = Math.min(lifetime, 63);
             }
-
             //drawOutline(aabb.expand(0.005, 0.005, 0.005), 0, 255, 255, trpy*4);
             //drawBox(aabb.expand(0.0025, 0.0025, 0.0025), 0, 255, 255, trpy/3);
 
@@ -71,7 +70,7 @@ public class RenderPingInWorld {
             float bz = block.get(2).getAsFloat() + 0.5F;
 
             wr.setTranslation(iPX + bx, iPY + by, iPZ + bz);
-            renderPing(mc, wr, e, Math.min(trpy*24, 255), 0, 0.5, 0, 0.5);
+            renderPing(mc, wr, e, Math.min(trpy*24, 255), 0, 0.5, 0, 0.5, bx, by, bz);
 
           }
           int lifetime = data.get("lifetime").getAsInt();
@@ -172,24 +171,24 @@ public class RenderPingInWorld {
     tessellator.draw();
   }
 
-  public static void renderPing(Minecraft mc, WorldRenderer wr, Entity e, int transparency, double minU, double maxU, double minV, double maxV)
-  {
+  public static void renderPing(Minecraft mc, WorldRenderer wr, Entity e, int transparency, double minU, double maxU, double minV, double maxV, float bx, float by, float bz) {
     Tessellator tes = Tessellator.getInstance();
-    float rX = ActiveRenderInfo.getRotationX() * 0.5F;
-    float rZ = -ActiveRenderInfo.getRotationZ() * 0.5F;
-    float rYZ = ActiveRenderInfo.getRotationYZ() * 0.5F;
-    float rXY = ActiveRenderInfo.getRotationXY() * 0.5F;
-    float rXZ = ActiveRenderInfo.getRotationXZ() * 0.5F;
 
-
+    double playerx = e.posX - bx;
+    double playerz = e.posZ - bz;
+    double angle = Math.atan(playerx/playerz) + PI/2;
+    double x1 = sin(angle) * 0.5;
+    double z1 = cos(angle) * 0.5;
+    Vec3 vec = new Vec3(e.posX-bz, e.posY-by, e.posZ-bz);
+    vec.distanceTo(new Vec3(0, 0, 0));
 
     GlStateManager.enableTexture2D();
     mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-    wr.pos(-rX - rXY, -rZ, -rYZ - rXZ).tex(maxU, maxV).color(255, 255, 255, transparency).endVertex();
-    wr.pos(-rX + rXY, +rZ, -rYZ + rXZ).tex(maxU, minV).color(255, 255, 255, transparency).endVertex();
-    wr.pos(+rX + rXY, +rZ, +rYZ + rXZ).tex(minU, minV).color(255, 255, 255, transparency).endVertex();
-    wr.pos(+rX - rXY, -rZ, +rYZ - rXZ).tex(minU, maxV).color(255, 255, 255, transparency).endVertex();
+    wr.pos(-x1, -0.5, -z1).tex(maxU, maxV).color(255, 255, 255, transparency).endVertex(); //Bottom-left
+    wr.pos(-x1, 0.5 , -z1).tex(maxU, minV).color(255, 255, 255, transparency).endVertex(); //Top-left
+    wr.pos(x1, 0.5, z1).tex(minU, minV).color(255, 255, 255, transparency).endVertex(); //Top-right
+    wr.pos(x1, -0.5, z1).tex(minU, maxV).color(255, 255, 255, transparency).endVertex(); //Bottom-right
     tes.draw();
     GlStateManager.disableTexture2D();
 
