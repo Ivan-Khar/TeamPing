@@ -10,8 +10,7 @@ import com.google.gson.JsonObject;
 import java.awt.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -41,19 +40,6 @@ public class EventListener {
 		} else if (Registrations.keyBindings[3].isPressed()) {
 			TeamPing.pingBlock("no", new Color(35, 255, 0));
 		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public void onHighlight(DrawBlockHighlightEvent event){
-		if(mc.theWorld != null) {
-			RenderPingInWorld.renderBlock(event);
-		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public void onGuiRender(RenderGameOverlayEvent.Post event){
 	}
 
 	@SideOnly(Side.CLIENT)

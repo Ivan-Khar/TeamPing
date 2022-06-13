@@ -4,5 +4,6 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [],
   "client": [
+    "GlobalRendererMixin"
   ]
 }

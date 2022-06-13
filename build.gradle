@@ -64,7 +64,6 @@ mixin {
     add sourceSets.main, "mixins.${modid}.refmap.json"
 }
 
-
 shadowJar {
     archiveFileName = jar.archiveFileName
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
