@@ -76,7 +76,7 @@ public class RenderGUI {
       wr.pos(-linewidth, 0, 0.0D).color(64, 64, 64, 127).endVertex(); //Right
       tes.draw();
 
-      if(timer >= 10){
+      if(timer >= 5){
 
       }
 
