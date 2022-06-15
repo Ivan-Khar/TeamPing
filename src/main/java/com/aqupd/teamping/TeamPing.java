@@ -32,6 +32,7 @@ public class TeamPing {
 	public static JsonArray pings = new JsonArray();
 
 	public static boolean guimenu = false;
+	public static int timer = 0;
 
 	private final EventListener eventListener;
 
