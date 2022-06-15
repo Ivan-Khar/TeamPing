@@ -1,4 +1,5 @@
 key.aqupd.categories.teamping=Team Ping
 
-key.aqupd.fkey=FKey
-key.aqupd.lmenukey=LMenuKey
+key.aqupd.menu=Ping menu
+key.aqupd.reset=Clear pings
+key.aqupd.test=Test ping

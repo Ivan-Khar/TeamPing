@@ -3,6 +3,7 @@ package com.aqupd.teamping.client;
 import static com.aqupd.teamping.TeamPing.MOD_ID;
 import static com.aqupd.teamping.TeamPing.pings;
 import static com.aqupd.teamping.listeners.EventListener.ticks;
+import static com.aqupd.teamping.setup.Registrations.keyBindings;
 import static com.aqupd.teamping.util.UtilMethods.distanceTo;
 import static java.lang.Math.*;
 import static net.minecraft.client.particle.EntityFX.*;
@@ -41,7 +42,7 @@ public class RenderPingInWorld {
       Entity e = mc.getRenderViewEntity();
 
       if(pings.size() != 0) {
-        for (JsonElement je : pings) {
+        for (JsonElement je: pings) {
           JsonObject data = je.getAsJsonObject();
           JsonArray jblock = data.get("bp").getAsJsonArray();
           JsonArray jcolor = data.get("color").getAsJsonArray();
@@ -108,6 +109,9 @@ public class RenderPingInWorld {
       GlStateManager.enableAlpha();
       GlStateManager.popAttrib();
       GlStateManager.popMatrix();
+      if (keyBindings[1].isPressed() && pings.size() != 0) {
+
+      }
     }
   }
 

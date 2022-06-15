@@ -5,19 +5,14 @@ import static com.aqupd.teamping.listeners.EventListener.ticks;
 import com.aqupd.teamping.listeners.EventListener;
 import com.aqupd.teamping.setup.Registrations;
 import com.aqupd.teamping.util.Configuration;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import java.awt.*;
 import java.io.IOException;
 import java.util.UUID;
-import javax.vecmath.Vector2d;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -35,6 +30,8 @@ public class TeamPing {
 	public static String logprefix = "[AqUpd's " + MOD_NAME + "] ";
 	private static Minecraft mc;
 	public static JsonArray pings = new JsonArray();
+
+	public static boolean guimenu = false;
 
 	private final EventListener eventListener;
 
