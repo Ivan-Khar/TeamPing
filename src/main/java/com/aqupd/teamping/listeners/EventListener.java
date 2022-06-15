@@ -32,7 +32,7 @@ public class EventListener {
 			data.addProperty("lifetime", lifetime);
 		}
 
-		if(guimenu && timer < 20) timer++;
+		if(guimenu && timer < 10) timer++;
 		else if(!guimenu && timer > 0) timer--;
 
 		guimenu = keyBindings[0].isKeyDown();
