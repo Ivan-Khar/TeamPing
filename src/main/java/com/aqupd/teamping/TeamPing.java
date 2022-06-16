@@ -33,7 +33,9 @@ public class TeamPing {
 
 	public static boolean guimenu = false;
 	public static int timer = 0;
-
+	public static long lastpingtime = 0;
+	public static double cX = 0;
+	public static double cY = 0;
 	private final EventListener eventListener;
 
 	public TeamPing() throws IOException {
@@ -49,28 +51,31 @@ public class TeamPing {
 	}
 
 	public static void pingBlock(String type, Color color){
-		JsonObject data = new JsonObject();
-		int distance = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
-		if((Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16 > 128)) distance = 128;
-		BlockPos bp = mc.thePlayer.rayTrace(distance, ticks).getBlockPos();
+		if((System.currentTimeMillis() - lastpingtime) > 1000) {
+			JsonObject data = new JsonObject();
+			int distance = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
+			if((Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16 > 128)) distance = 128;
+			BlockPos bp = mc.thePlayer.rayTrace(distance, ticks).getBlockPos();
 
-		JsonArray blockpos = new JsonArray();
-		blockpos.add(new JsonPrimitive(bp.getX()));
-		blockpos.add(new JsonPrimitive(bp.getY()));
-		blockpos.add(new JsonPrimitive(bp.getZ()));
+			JsonArray blockpos = new JsonArray();
+			blockpos.add(new JsonPrimitive(bp.getX()));
+			blockpos.add(new JsonPrimitive(bp.getY()));
+			blockpos.add(new JsonPrimitive(bp.getZ()));
 
-		JsonArray clr = new JsonArray();
-		clr.add(color.getRed());
-		clr.add(color.getGreen());
-		clr.add(color.getBlue());
+			JsonArray clr = new JsonArray();
+			clr.add(color.getRed());
+			clr.add(color.getGreen());
+			clr.add(color.getBlue());
 
-		int faketime = 63 * 2 + 500;
+			int faketime = 63 * 2 + 500;
 
-		data.add("bp", blockpos);
-		data.add("lifetime", new JsonPrimitive(faketime));
-		data.add("type", new JsonPrimitive(type));
-		data.add("color", clr);
-		data.add("uuid", new JsonPrimitive(UUID.randomUUID().toString()));
-		pings.add(data);
+			data.add("bp", blockpos);
+			data.add("lifetime", new JsonPrimitive(faketime));
+			data.add("type", new JsonPrimitive(type));
+			data.add("color", clr);
+			data.add("uuid", new JsonPrimitive(UUID.randomUUID().toString()));
+			pings.add(data);
+			lastpingtime = System.currentTimeMillis();
+		}
 	}
 }

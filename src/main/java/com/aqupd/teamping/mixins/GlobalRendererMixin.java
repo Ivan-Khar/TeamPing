@@ -11,11 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GlobalRendererMixin {
   @Inject(
     method = "renderWorldPass(IFJ)V",
-    at = @At(
-      value = "INVOKE",
-      target = "Lnet/minecraft/client/renderer/GlStateManager;matrixMode(I)V",
-      ordinal = 7
-    )
+    at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;matrixMode(I)V", ordinal = 7)
   )
   private void mixin(CallbackInfo ci){
     RenderPingInWorld.renderBlock();

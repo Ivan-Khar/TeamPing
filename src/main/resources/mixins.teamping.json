@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_8",
   "client": [
     "GlobalRendererMixin",
-    "GuiIngameMixin"
+    "GuiIngameMixin",
+    "GuiScreenMixin",
+    "MinecraftMixin"
   ]
 }
