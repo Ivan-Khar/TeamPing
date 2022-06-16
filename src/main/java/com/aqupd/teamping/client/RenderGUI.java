@@ -21,7 +21,7 @@ public class RenderGUI {
       double width = sr.getScaledWidth_double();
       double height = sr.getScaledHeight_double();
       double linestart = 10;
-      double linewidth = linestart + Math.min(timer, 5)*3;
+      double linewidth = linestart + Math.min(timer, 4)*4;
       Tessellator tes = Tessellator.getInstance();
       WorldRenderer wr = tes.getWorldRenderer();
       GlStateManager.enableBlend();
@@ -60,13 +60,13 @@ public class RenderGUI {
       wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
       GL11.glLineWidth(1);
       wr.pos(endx, -endy, 0.0D).color(64, 64, 64, 127).endVertex(); //Top-Right
-      wr.pos(endx, -endy+1, 0.0D).color(64, 64, 64, 127).endVertex(); //Top-Right
+      wr.pos(endx, -endy+0.75, 0.0D).color(64, 64, 64, 127).endVertex(); //Top-Right
       wr.pos(endx, endy, 0.0D).color(64, 64, 64, 127).endVertex();  //Bottom-Right
-      wr.pos(endx, endy-1, 0.0D).color(64, 64, 64, 127).endVertex();  //Bottom-Right
+      wr.pos(endx, endy-0.75, 0.0D).color(64, 64, 64, 127).endVertex();  //Bottom-Right
       wr.pos(-endx, endy, 0.0D).color(64, 64, 64, 127).endVertex(); //Bottom-Left
-      wr.pos(-endx, endy-1, 0.0D).color(64, 64, 64, 127).endVertex(); //Bottom-Left
+      wr.pos(-endx, endy-0.75, 0.0D).color(64, 64, 64, 127).endVertex(); //Bottom-Left
       wr.pos(-endx, -endy, 0.0D).color(64, 64, 64, 127).endVertex();//Top-Left
-      wr.pos(-endx, -endy+1, 0.0D).color(64, 64, 64, 127).endVertex();//Top-Left
+      wr.pos(-endx, -endy+0.75, 0.0D).color(64, 64, 64, 127).endVertex();//Top-Left
       tes.draw();
 
       wr.begin(GL11.GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
@@ -191,16 +191,6 @@ public class RenderGUI {
         wr.pos(midx - 8, midy-2.5 + 8, 0).tex(0.5, 1).color(255, 255, 255, alpha * 4).endVertex();   //Bottom-Right 4
         wr.pos(midx + 8, midy-2.5 + 8, 0).tex(1, 1).color(255, 255, 255, alpha * 4).endVertex();     //Bottom-Right 4
         wr.pos(midx + 8, midy-2.5 - 8, 0).tex(1, 0.5).color(255, 255, 255, alpha * 4).endVertex();   //Bottom-Right 4
-        /*
-        wr.pos(-8, -linewidth-16, 0.0D).tex(0, 0).endVertex();    //Top 1
-        wr.pos(-8, -linewidth, 0.0D).tex(0, 0.5).endVertex();        //Top 1
-        wr.pos(8, -linewidth, 0.0D).tex(0.5, 0.5).endVertex();       //Top 1
-        wr.pos(8, -linewidth-16, 0.0D).tex(0.5, 0).endVertex();   //Top 1
-        wr.pos(midx - 8, -midy - 8, 0).tex(0.5, 0.5).endVertex(); //Top-Right 2
-        wr.pos(midx - 8, -midy + 8, 0).tex(0.5, 1).endVertex();   //Top-Right 2
-        wr.pos(midx + 8, -midy + 8, 0).tex(1, 1).endVertex();     //Top-Right 2
-        wr.pos(midx + 8, -midy - 8, 0).tex(1, 0.5).endVertex();   //Top-Right 2
-        */
         tes.draw();
 
         GlStateManager.disableTexture2D();
