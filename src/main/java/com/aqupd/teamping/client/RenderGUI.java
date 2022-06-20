@@ -1,6 +1,7 @@
 package com.aqupd.teamping.client;
 
 import static com.aqupd.teamping.TeamPing.*;
+import static com.aqupd.teamping.client.PingBlock.*;
 import static java.lang.Math.*;
 
 import java.awt.*;

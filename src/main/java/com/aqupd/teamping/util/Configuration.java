@@ -1,7 +1,6 @@
 package com.aqupd.teamping.util;
 
 import static com.aqupd.teamping.TeamPing.LOGGER;
-import static com.aqupd.teamping.TeamPing.logprefix;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -58,7 +57,7 @@ public class Configuration {
 				printwriter.close();
 			}
 		} catch (Exception exception) {
-			LOGGER.error(logprefix + "Failed to save options", exception);
+			LOGGER.error("Failed to save options", exception);
 		}
 	}
 }

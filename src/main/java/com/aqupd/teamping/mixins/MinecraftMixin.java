@@ -28,4 +28,12 @@ public class MinecraftMixin {
   private void mixin2(CallbackInfo ci){
     if(guimenu) ci.cancel();
   }
+
+  @Inject(
+    method = "shutdownMinecraftApplet()V",
+    at = @At(value = "INVOKE", target = "Lnet/minecraft/client/stream/IStream;shutdownStream()V")
+  )
+  private void mixin3(CallbackInfo ci){
+    shutclientthread = true;
+  }
 }
