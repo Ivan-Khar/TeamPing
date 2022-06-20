@@ -101,16 +101,16 @@ public class RenderGUI {
         if(dist > 15){
           if((angle <= 22.5) || (angle > 337.5)){
             a1 = darkangle;
-            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("here", new Color(255, 255, 0));
+            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("here");
           } else if(angle <= 67.5){
             a2 = darkangle;
-            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("danger", new Color(255, 0, 0));
+            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("danger");
           } else if(angle <= 112.5){
             a3 = darkangle;
-            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("question", new Color(0, 0, 255));
+            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("question");
           } else if(angle <= 157.5){
             a4 = darkangle;
-            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("no", new Color(0, 255, 0));
+            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("no");
           } else if(angle <= 202.5){
             a5 = darkangle;
           } else if(angle <= 247.5){

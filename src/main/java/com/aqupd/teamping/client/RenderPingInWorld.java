@@ -65,16 +65,16 @@ public class RenderPingInWorld {
             int lifetime = data.get("lifetime").getAsInt();
 
             int trpy;
-            if (lifetime >= (500 + 63)){
-              trpy = (500+63*2)-lifetime;
+            if (lifetime >= (500 + 31)){
+              trpy = (500+31*2)-lifetime;
             } else {
-              trpy = Math.min(lifetime, 63);
+              trpy = Math.min(lifetime, 31);
             }
 
             if(dist2d < 6) trpy = trpy/2;
 
-            drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy);
-            drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy/3);
+            drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy*2);
+            drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy*2/3);
 
             float bx = jblock.get(0).getAsFloat() + 0.5F;
             float by = jblock.get(1).getAsFloat() + 0.5F;
@@ -114,9 +114,6 @@ public class RenderPingInWorld {
       GlStateManager.enableAlpha();
       GlStateManager.popAttrib();
       GlStateManager.popMatrix();
-      if (keyBindings[1].isPressed() && pings.size() != 0) {
-
-      }
     }
   }
 
@@ -213,16 +210,17 @@ public class RenderPingInWorld {
     mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
+
     if(player.yCoord >= -1) {
-      wr.pos(cosyaw, player.yCoord + 0.5, -sinyaw).tex(minU1, maxV1).color(255, 255, 255, transparency * 4).endVertex(); //Bottom-left
-      wr.pos(cosyaw, player.yCoord + 2.5, -sinyaw).tex(minU1, minV1).color(255, 255, 255, transparency * 4).endVertex(); //Top-left
-      wr.pos(-cosyaw, player.yCoord + 2.5, sinyaw).tex(maxU1, minV1).color(255, 255, 255, transparency * 4).endVertex(); //Top-right
-      wr.pos(-cosyaw, player.yCoord + 0.5, sinyaw).tex(maxU1, maxV1).color(255, 255, 255, transparency * 4).endVertex(); //Bottom-right
+      wr.pos(cosyaw, player.yCoord + 0.5, -sinyaw).tex(minU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-left
+      wr.pos(cosyaw, player.yCoord + 2.5, -sinyaw).tex(minU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-left
+      wr.pos(-cosyaw, player.yCoord + 2.5, sinyaw).tex(maxU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-right
+      wr.pos(-cosyaw, player.yCoord + 0.5, sinyaw).tex(maxU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-right
     } else {
-      wr.pos(cosyaw, player.yCoord + 0.5, -sinyaw).tex(minU1, minV1).color(255, 255, 255, transparency * 4).endVertex(); //Bottom-left
-      wr.pos(cosyaw, player.yCoord + 2.5, -sinyaw).tex(minU1, maxV1).color(255, 255, 255, transparency * 4).endVertex(); //Top-left
-      wr.pos(-cosyaw, player.yCoord + 2.5, sinyaw).tex(maxU1, maxV1).color(255, 255, 255, transparency * 4).endVertex(); //Top-right
-      wr.pos(-cosyaw, player.yCoord + 0.5, sinyaw).tex(maxU1, minV1).color(255, 255, 255, transparency * 4).endVertex(); //Bottom-right
+      wr.pos(cosyaw, player.yCoord + 0.5, -sinyaw).tex(minU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-left
+      wr.pos(cosyaw, player.yCoord + 2.5, -sinyaw).tex(minU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-left
+      wr.pos(-cosyaw, player.yCoord + 2.5, sinyaw).tex(maxU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-right
+      wr.pos(-cosyaw, player.yCoord + 0.5, sinyaw).tex(maxU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-right
     }
 
     tes.draw();
@@ -232,10 +230,10 @@ public class RenderPingInWorld {
     wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
     if(player.yCoord >= -1) {
       wr.pos(0, 0, 0).color(red, green, blue, transparency).endVertex();
-      wr.pos(0, player.yCoord + 0.75, 0).color(red, green, blue, transparency).endVertex();
+      wr.pos(0, player.yCoord + 0.75, 0).color(red, green, blue, transparency*2).endVertex();
     } else {
       wr.pos(0, 0, 0).color(red, green, blue, transparency).endVertex();
-      wr.pos(0, player.yCoord + 1.25, 0).color(red, green, blue, transparency).endVertex();
+      wr.pos(0, player.yCoord + 1.25, 0).color(red, green, blue, transparency*2).endVertex();
     }
     tes.draw();
   }

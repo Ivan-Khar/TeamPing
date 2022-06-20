@@ -23,8 +23,9 @@ public class ClientWriteThread extends Thread{
       OutputStream output = socket.getOutputStream();
       PrintWriter writer = new PrintWriter(output, true);
       JsonObject data = new JsonObject();
-
       do {
+        JsonObject ping1 = new JsonObject();
+        if(ping != null) {ping1 = ping;}
         if (init) {
           if (step == 0) {
             writer.println("CONNECT");
@@ -41,9 +42,9 @@ public class ClientWriteThread extends Thread{
             writer.println("YES");
             init = false;
           }
-        } else if(ping.size() != 0){
-          LOGGER.info(ping);
-          writer.println(ping);
+        } else if(ping1.size() != 0){
+          LOGGER.info(ping1);
+          writer.println(ping1);
           ping = new JsonObject();
         }
       } while (true);

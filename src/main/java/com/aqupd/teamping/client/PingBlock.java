@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 
 public class PingBlock {
-  public static void pingBlock(String type, Color color){
+  public static void pingBlock(String type){
     if((System.currentTimeMillis() - lastpingtime) > 1000) {
       Minecraft mc = Minecraft.getMinecraft();
       JsonObject data = new JsonObject();
@@ -25,20 +25,20 @@ public class PingBlock {
       blockpos.add(new JsonPrimitive(bp.getY()));
       blockpos.add(new JsonPrimitive(bp.getZ()));
 
-      JsonArray clr = new JsonArray();
-      clr.add(color.getRed());
-      clr.add(color.getGreen());
-      clr.add(color.getBlue());
+      //JsonArray clr = new JsonArray();
+      //clr.add(color.getRed());
+      //clr.add(color.getGreen());
+      //clr.add(color.getBlue());
 
-      int faketime = 63 * 2 + 500;
+      //int faketime = 31 * 2 + 500;
 
       data.add("bp", blockpos);
-      data.add("lifetime", new JsonPrimitive(faketime));
+      //data.add("lifetime", new JsonPrimitive(faketime));
       data.add("type", new JsonPrimitive(type));
-      data.add("color", clr);
+      //data.add("color", clr);
       data.add("uuid", new JsonPrimitive(UUID.randomUUID().toString()));
       ping = data;
-      pings.add(data);
+      //pings.add(data);
       lastpingtime = System.currentTimeMillis();
     }
   }
