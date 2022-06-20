@@ -1,7 +1,9 @@
 package com.aqupd.teamping.mixins;
 
 import static com.aqupd.teamping.TeamPing.*;
+import static com.aqupd.teamping.listeners.EventListener.socket;
 
+import java.io.IOException;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -34,6 +36,10 @@ public class MinecraftMixin {
     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/stream/IStream;shutdownStream()V")
   )
   private void mixin3(CallbackInfo ci){
-    shutclientthread = true;
+    try {
+      if(socket.isConnected()) socket.close();
+    } catch (IOException e) {
+      LOGGER.error("Server exception", e);
+    }
   }
 }

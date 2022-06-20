@@ -3,7 +3,8 @@ package com.aqupd.teamping.listeners;
 import static com.aqupd.teamping.TeamPing.*;
 import static com.aqupd.teamping.setup.Registrations.keyBindings;
 
-import com.aqupd.teamping.client.ClientThread;
+import com.aqupd.teamping.client.ClientListenThread;
+import com.aqupd.teamping.client.ClientWriteThread;
 import com.aqupd.teamping.client.RenderGUI;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,7 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EventListener {
 	public static float ticks;
-
+	public static Socket socket;
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onRenderTickEvent(TickEvent.RenderTickEvent event){
@@ -30,12 +31,13 @@ public class EventListener {
 	public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
 		if (!connected) {
 			try {
-				Socket socket = new Socket("localhost", 28754);
-				new ClientThread(socket, event.player).start();
+				socket = new Socket("localhost", 28754);
+				new ClientListenThread(socket).start();
+				new ClientWriteThread(socket, event.player).start();
 			} catch (UnknownHostException ex) {
-				System.out.println("Server not found: " + ex.getMessage());
+				LOGGER.error("Server not found", ex);
 			} catch (IOException ex) {
-				System.out.println("I/O error: " + ex.getMessage());
+				LOGGER.error("Server error", ex);
 			}
 		}
 	}
