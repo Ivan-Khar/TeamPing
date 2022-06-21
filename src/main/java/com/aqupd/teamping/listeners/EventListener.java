@@ -29,15 +29,16 @@ public class EventListener {
 	@SubscribeEvent
 	public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
 		if (time == 0) time = System.currentTimeMillis();
-		if (!connected && (System.currentTimeMillis() - time) > 2000 && conattempts < 3) {
+		if ((System.currentTimeMillis() - time) > 3000 && conattempts < 3 && !connecting) {
+			connecting = true;
 			try {
 				socket = new Socket("localhost", 28754);
 				new ClientThreads(socket, event.player);
-			} catch (UnknownHostException ex) {
-				LOGGER.error("Server not found", ex);
 			} catch (IOException ex) {
+				connecting = false;
 				LOGGER.error("Server error", ex);
 			}
+
 			time = System.currentTimeMillis();
 			conattempts++;
 		}

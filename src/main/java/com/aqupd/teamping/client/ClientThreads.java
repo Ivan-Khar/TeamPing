@@ -22,7 +22,6 @@ public class ClientThreads {
     this.player = entity;
     new Reader().start();
     new Writer().start();
-    connected = true;
     conattempts = 0;
   }
 
@@ -59,12 +58,14 @@ public class ClientThreads {
           }
         } while (!text.equals("DISCONNECT"));
         closed = true;
-        connected = false;
-
+        connecting = false;
+        time = System.currentTimeMillis();
         socket.close();
       } catch (IOException ex) {
         LOGGER.error("Client reader exception", ex);
-        connected = false;
+        closed = true;
+        connecting = false;
+        time = System.currentTimeMillis();
       }
     }
   }
@@ -77,6 +78,7 @@ public class ClientThreads {
         JsonObject data = new JsonObject();
         do {
           JsonObject ping1 = new JsonObject();
+          if (socket.isClosed()) break;
           if (ping != null) ping1 = ping;
           if (init) {
             if (step == 0) {
