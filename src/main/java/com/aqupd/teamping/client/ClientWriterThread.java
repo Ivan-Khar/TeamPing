@@ -9,13 +9,14 @@ import java.net.Socket;
 import net.minecraft.entity.player.EntityPlayer;
 
 @SuppressWarnings({"InfiniteLoopStatement", "FieldCanBeLocal"})
-public class ClientWriteThread extends Thread{
+public class ClientWriterThread extends Thread{
   private final Socket socket;
   private final EntityPlayer player;
 
-  public ClientWriteThread(Socket socket, EntityPlayer entity) {
+  public ClientWriterThread(Socket socket, EntityPlayer entity) {
     this.socket = socket;
     this.player = entity;
+    connected = true;
   }
 
   public void run() {

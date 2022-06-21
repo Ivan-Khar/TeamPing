@@ -2,17 +2,15 @@ package com.aqupd.teamping.client;
 
 import static com.aqupd.teamping.TeamPing.*;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import java.io.*;
 import java.net.Socket;
-import net.minecraft.entity.player.EntityPlayer;
 
-public class ClientListenThread extends Thread{
+public class ClientReaderThread extends Thread{
   private final Socket socket;
 
-  public ClientListenThread(Socket socket) {
+  public ClientReaderThread(Socket socket) {
     this.socket = socket;
+    connected = true;
   }
 
   public void run() {
@@ -21,7 +19,6 @@ public class ClientListenThread extends Thread{
       BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
       String text = "";
-      connected = true;
 
       do {
         if (step != 0) text = reader.readLine();
