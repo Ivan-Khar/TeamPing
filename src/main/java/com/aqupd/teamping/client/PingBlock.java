@@ -27,7 +27,6 @@ public class PingBlock {
       data.add("bp", blockpos);
       data.add("type", new JsonPrimitive(type));
       data.add("uuid", new JsonPrimitive(UUID.randomUUID().toString()));
-      ping = data;
 
       int faketime = 31 * 2 + 500;
       JsonArray clr = new JsonArray();
@@ -36,6 +35,7 @@ public class PingBlock {
       clr.add(255);
       data.add("color", clr);
       data.add("lifetime", new JsonPrimitive(faketime));
+      ping = data;
       pings.add(data);
       lastpingtime = System.currentTimeMillis();
     }

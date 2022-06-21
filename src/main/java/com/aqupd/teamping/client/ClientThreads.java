@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import java.io.*;
 import java.net.Socket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class ClientThreads {
@@ -31,7 +32,7 @@ public class ClientThreads {
         InputStream input = socket.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 
-        String text = "";
+        String text;
 
         do {
           text = reader.readLine();
@@ -39,17 +40,22 @@ public class ClientThreads {
 
           if (init) {
             if (step == 1 && text.equals("YES")) {
+              LOGGER.info(step);
               step++;
             } else if (step == 3 && text.equals("YES")) {
+              LOGGER.info(step);
               step++;
             } else if (step == 5 && text.equals("SUCCESS")) {
+              LOGGER.info(step);
               step++;
             }
           } else {
             int faketime = 31 * 2 + 500;
             JsonObject jo = JsonParser.parseString(text).getAsJsonObject();
             jo.add("lifetime", new JsonPrimitive(faketime));
+            LOGGER.info("received ping " + jo);
             pings.add(jo);
+            Minecraft.getMinecraft().getSoundHandler().playSound(new PingSound(player));
           }
         } while (!text.equals("DISCONNECT"));
         closed = true;
@@ -74,23 +80,29 @@ public class ClientThreads {
           if (ping != null) ping1 = ping;
           if (init) {
             if (step == 0) {
+              LOGGER.info(step);
               writer.println("CONNECT");
               step++;
             } else if (step == 2) {
+              LOGGER.info(step);
               writer.println("DATA");
               step++;
             } else if (step == 4) {
               data.add("name", new JsonPrimitive(player.getName()));
               data.add("uuid", new JsonPrimitive(player.getUniqueID().toString()));
+              LOGGER.info(step + " " + data);
               writer.println(data);
               step++;
             } else if (step == 6) {
+              LOGGER.info(step);
               writer.println("YES");
               init = false;
             }
           } else if(ping1.size() != 0){
+            LOGGER.info("send ping " + ping1);
             writer.println(ping1);
             ping = new JsonObject();
+            Minecraft.getMinecraft().getSoundHandler().playSound(new PingSound(player));
           }
         } while (!closed);
       } catch (IOException ex) {
