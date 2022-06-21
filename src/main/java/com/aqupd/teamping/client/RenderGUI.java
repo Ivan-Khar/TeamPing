@@ -183,15 +183,15 @@ public class RenderGUI {
         wr.pos(midx + 8, -midy + 8, 0).tex(1, 0.5).color(255, 255, 255, alpha * 4).endVertex();   //Top-Right 2
         wr.pos(midx + 8, -midy - 8, 0).tex(1, 0).color(255, 255, 255, alpha * 4).endVertex();     //Top-Right 2
 
-        wr.pos(linewidth, -7, 0.0D).tex(0, 0.5).color(255, 255, 255, alpha * 4).endVertex();         //Right 3
-        wr.pos(linewidth, 9, 0.0D).tex(0, 1).color(255, 255, 255, alpha * 4).endVertex();            //Right 3
-        wr.pos(linewidth+16, 9, 0.0D).tex(0.5, 1).color(255, 255, 255, alpha * 4).endVertex();    //Right 3
-        wr.pos(linewidth+16, -7, 0.0D).tex(0.5, 0.5).color(255, 255, 255, alpha * 4).endVertex(); //Right 3
+        wr.pos(linewidth, -8, 0.0D).tex(0, 0.5).color(255, 255, 255, alpha * 4).endVertex();         //Right 3
+        wr.pos(linewidth, 8, 0.0D).tex(0, 1).color(255, 255, 255, alpha * 4).endVertex();            //Right 3
+        wr.pos(linewidth+16, 8, 0.0D).tex(0.5, 1).color(255, 255, 255, alpha * 4).endVertex();    //Right 3
+        wr.pos(linewidth+16, -8, 0.0D).tex(0.5, 0.5).color(255, 255, 255, alpha * 4).endVertex(); //Right 3
 
-        wr.pos(midx - 8, midy-2.5 - 8, 0).tex(0.5, 0.5).color(255, 255, 255, alpha * 4).endVertex(); //Bottom-Right 4
-        wr.pos(midx - 8, midy-2.5 + 8, 0).tex(0.5, 1).color(255, 255, 255, alpha * 4).endVertex();   //Bottom-Right 4
-        wr.pos(midx + 8, midy-2.5 + 8, 0).tex(1, 1).color(255, 255, 255, alpha * 4).endVertex();     //Bottom-Right 4
-        wr.pos(midx + 8, midy-2.5 - 8, 0).tex(1, 0.5).color(255, 255, 255, alpha * 4).endVertex();   //Bottom-Right 4
+        wr.pos(midx - 8, midy - 8, 0).tex(0.5, 0.5).color(255, 255, 255, alpha * 4).endVertex(); //Bottom-Right 4
+        wr.pos(midx - 8, midy + 8, 0).tex(0.5, 1).color(255, 255, 255, alpha * 4).endVertex();   //Bottom-Right 4
+        wr.pos(midx + 8, midy + 8, 0).tex(1, 1).color(255, 255, 255, alpha * 4).endVertex();     //Bottom-Right 4
+        wr.pos(midx + 8, midy - 8, 0).tex(1, 0.5).color(255, 255, 255, alpha * 4).endVertex();   //Bottom-Right 4
         tes.draw();
 
         GlStateManager.disableTexture2D();

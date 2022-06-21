@@ -22,12 +22,12 @@ public class TeamPing {
 	public static final Logger LOGGER = LogManager.getLogger("AqUpd's " + MOD_NAME);
 	public static JsonArray pings = new JsonArray();
 	public static JsonObject ping;
-	public static boolean init = true;
 	public static boolean guimenu = false;
 	public static boolean connected = false;
-	public static int step = 0;
 	public static int timer = 0;
+	public static int conattempts = 0;
 	public static long lastpingtime = 0;
+	public static long time;
 	public static double cX = 0;
 	public static double cY = 0;
 	private final EventListener eventListener;

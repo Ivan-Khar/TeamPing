@@ -6,7 +6,6 @@ import static com.aqupd.teamping.listeners.EventListener.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import java.awt.*;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
@@ -25,20 +24,19 @@ public class PingBlock {
       blockpos.add(new JsonPrimitive(bp.getY()));
       blockpos.add(new JsonPrimitive(bp.getZ()));
 
-      //JsonArray clr = new JsonArray();
-      //clr.add(color.getRed());
-      //clr.add(color.getGreen());
-      //clr.add(color.getBlue());
-
-      //int faketime = 31 * 2 + 500;
-
       data.add("bp", blockpos);
-      //data.add("lifetime", new JsonPrimitive(faketime));
       data.add("type", new JsonPrimitive(type));
-      //data.add("color", clr);
       data.add("uuid", new JsonPrimitive(UUID.randomUUID().toString()));
       ping = data;
-      //pings.add(data);
+
+      int faketime = 31 * 2 + 500;
+      JsonArray clr = new JsonArray();
+      clr.add(20);
+      clr.add(0);
+      clr.add(255);
+      data.add("color", clr);
+      data.add("lifetime", new JsonPrimitive(faketime));
+      pings.add(data);
       lastpingtime = System.currentTimeMillis();
     }
   }

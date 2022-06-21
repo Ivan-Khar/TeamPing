@@ -3,8 +3,7 @@ package com.aqupd.teamping.listeners;
 import static com.aqupd.teamping.TeamPing.*;
 import static com.aqupd.teamping.setup.Registrations.keyBindings;
 
-import com.aqupd.teamping.client.ClientReaderThread;
-import com.aqupd.teamping.client.ClientWriterThread;
+import com.aqupd.teamping.client.ClientThreads;
 import com.aqupd.teamping.client.RenderGUI;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,16 +28,18 @@ public class EventListener {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
-		if (!connected) {
+		if (time == 0) time = System.currentTimeMillis();
+		if (!connected && (System.currentTimeMillis() - time) > 2000 && conattempts < 3) {
 			try {
 				socket = new Socket("localhost", 28754);
-				new ClientReaderThread(socket).start();
-				new ClientWriterThread(socket, event.player).start();
+				new ClientThreads(socket, event.player);
 			} catch (UnknownHostException ex) {
 				LOGGER.error("Server not found", ex);
 			} catch (IOException ex) {
 				LOGGER.error("Server error", ex);
 			}
+			time = System.currentTimeMillis();
+			conattempts++;
 		}
 	}
 

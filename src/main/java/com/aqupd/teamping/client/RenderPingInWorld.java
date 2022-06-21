@@ -1,9 +1,6 @@
 package com.aqupd.teamping.client;
 
-import static com.aqupd.teamping.TeamPing.MOD_ID;
-import static com.aqupd.teamping.TeamPing.pings;
-import static com.aqupd.teamping.listeners.EventListener.ticks;
-import static com.aqupd.teamping.setup.Registrations.keyBindings;
+import static com.aqupd.teamping.TeamPing.*;
 import static com.aqupd.teamping.util.UtilMethods.*;
 import static java.lang.Math.*;
 import static net.minecraft.client.particle.EntityFX.*;
@@ -25,7 +22,7 @@ import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class RenderPingInWorld {
-  public static void renderBlock() {
+  public static void renderBlock(float pticks) {
     try {
       GlStateManager.pushMatrix();
       GlStateManager.pushAttrib();
@@ -41,6 +38,9 @@ public class RenderPingInWorld {
       WorldRenderer wr = tes.getWorldRenderer();
       Entity e = mc.getRenderViewEntity();
 
+      double oldy = e.prevPosY;
+      double newy = e.posY;
+
       if(pings.size() != 0) {
         for (JsonElement je: pings) {
           JsonObject data = je.getAsJsonObject();
@@ -51,14 +51,14 @@ public class RenderPingInWorld {
           Color color = new Color(jcolor.get(0).getAsInt(), jcolor.get(1).getAsInt(), jcolor.get(2).getAsInt());
           BlockPos bp = new BlockPos(jblock.get(0).getAsInt(), jblock.get(1).getAsInt(), jblock.get(2).getAsInt());
 
-          double dist = distanceTo3D(e, bp, ticks);
-          double dist2d = distanceTo2D(e, bp, ticks);
+          double dist = distanceTo3D(e, bp);
+          double dist2d = distanceTo2D(e, bp);
 
           if (dist2d < Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16) {
             double iPX = -interpPosX;
             double iPY = -interpPosY;
             double iPZ = -interpPosZ;
-            wr.setTranslation(iPX, iPY,iPZ);
+            wr.setTranslation(iPX, iPY, iPZ);
 
             GL11.glLineWidth((float) (10 / dist));
             AxisAlignedBB aabb = new AxisAlignedBB(bp, bp.add(1, 1, 1));
@@ -80,19 +80,19 @@ public class RenderPingInWorld {
             float by = jblock.get(1).getAsFloat() + 0.5F;
             float bz = jblock.get(2).getAsFloat() + 0.5F;
 
-            wr.setTranslation(iPX + bx, iPY + by, iPZ + bz);
+            wr.setTranslation(iPX + bx, iPY, iPZ + bz);
             switch(type){
               case "here":
-                renderPing(mc, wr, e, trpy, 64, 0, 32, 0, 32, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), dist2d);
+                renderPing(mc, wr, e, trpy, 64, 0, 32, 0, 32, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp, oldy, newy);
                 break;
               case "danger":
-                renderPing(mc, wr, e, trpy, 64, 32, 64, 0, 32, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), dist2d);
+                renderPing(mc, wr, e, trpy, 64, 32, 64, 0, 32, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp, oldy, newy);
                 break;
               case "question":
-                renderPing(mc, wr, e, trpy, 64, 0, 32, 32, 64, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), dist2d);
+                renderPing(mc, wr, e, trpy, 64, 0, 32, 32, 64, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp, oldy, newy);
                 break;
               case "no":
-                renderPing(mc, wr, e, trpy, 64, 32, 64, 32, 64, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), dist2d);
+                renderPing(mc, wr, e, trpy, 64, 32, 64, 32, 64, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp, oldy, newy);
             }
           }
           int lifetime = data.get("lifetime").getAsInt();
@@ -193,9 +193,11 @@ public class RenderPingInWorld {
     tessellator.draw();
   }
 
-  public static void renderPing(Minecraft mc, WorldRenderer wr, Entity e, int transparency, int resolution, float minU, float maxU, float minV, float maxV, float bx, float by, float bz, int red, int green, int blue, double distance) {
+  public static void renderPing(Minecraft mc, WorldRenderer wr, Entity e, int transparency, int resolution, float minU, float maxU, float minV, float maxV, float bx, float by, float bz, int red, int green, int blue, float pticks, BlockPos bp, double oldy, double newy) {
     Tessellator tes = Tessellator.getInstance();
     Vec3 player = new Vec3(e.posX - bx, e.posY - by + e.getEyeHeight(), e.posZ - bz);
+
+    double ypos = oldy + (newy - oldy) * pticks;
 
     float minU1 = minU / resolution;
     float maxU1 = maxU / resolution;
@@ -206,35 +208,28 @@ public class RenderPingInWorld {
     double sinyaw = sin(yaw);
     double cosyaw = cos(yaw);
 
+    GL11.glLineWidth(2);
+    wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+    wr.pos(0, bp.getY(), 0).color(red, green, blue, transparency).endVertex();
+    wr.pos(0, ypos + 1.5, 0).color(red, green, blue, transparency*2).endVertex();
+    tes.draw();
+
     GlStateManager.enableTexture2D();
     mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
-
-    if(player.yCoord >= -1) {
-      wr.pos(cosyaw, player.yCoord + 0.5, -sinyaw).tex(minU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-left
-      wr.pos(cosyaw, player.yCoord + 2.5, -sinyaw).tex(minU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-left
-      wr.pos(-cosyaw, player.yCoord + 2.5, sinyaw).tex(maxU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-right
-      wr.pos(-cosyaw, player.yCoord + 0.5, sinyaw).tex(maxU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-right
+    if(ypos - bp.getY()>= -1) {
+      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-left
+      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-left
+      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-right
+      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-right
     } else {
-      wr.pos(cosyaw, player.yCoord + 0.5, -sinyaw).tex(minU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-left
-      wr.pos(cosyaw, player.yCoord + 2.5, -sinyaw).tex(minU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-left
-      wr.pos(-cosyaw, player.yCoord + 2.5, sinyaw).tex(maxU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-right
-      wr.pos(-cosyaw, player.yCoord + 0.5, sinyaw).tex(maxU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-right
+      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-left
+      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-left
+      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-right
+      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-right
     }
-
     tes.draw();
     GlStateManager.disableTexture2D();
-
-    GL11.glLineWidth(2);
-    wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-    if(player.yCoord >= -1) {
-      wr.pos(0, 0, 0).color(red, green, blue, transparency).endVertex();
-      wr.pos(0, player.yCoord + 0.75, 0).color(red, green, blue, transparency*2).endVertex();
-    } else {
-      wr.pos(0, 0, 0).color(red, green, blue, transparency).endVertex();
-      wr.pos(0, player.yCoord + 1.25, 0).color(red, green, blue, transparency*2).endVertex();
-    }
-    tes.draw();
   }
 }
