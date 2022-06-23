@@ -36,6 +36,7 @@ public class MinecraftMixin {
     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/stream/IStream;shutdownStream()V")
   )
   private void mixin3(CallbackInfo ci){
+    stoppingmc = true;
     try {
       if(socket.isConnected()) socket.close();
     } catch (IOException e) {

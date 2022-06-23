@@ -29,10 +29,10 @@ public class EventListener {
 	@SubscribeEvent
 	public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
 		if (time == 0) time = System.currentTimeMillis();
-		if ((System.currentTimeMillis() - time) > 3000 && conattempts < 3 && !connecting) {
+		if ((System.currentTimeMillis() - time) > 3000 && conattempts < 3 && !connecting && !stoppingmc) {
 			connecting = true;
 			try {
-				socket = new Socket("localhost", 28754);
+				socket = new Socket("mcmod.theaq.one", 28754);
 				new ClientThreads(socket, event.player);
 			} catch (IOException ex) {
 				connecting = false;

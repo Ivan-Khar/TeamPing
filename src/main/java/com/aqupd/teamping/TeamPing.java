@@ -23,7 +23,7 @@ public class TeamPing {
 	public static JsonArray pings = new JsonArray();
 	public static JsonObject ping;
 	public static boolean guimenu = false;
-	public static boolean connected = false;
+	public static boolean stoppingmc = false;
 	public static boolean connecting = false;
 	public static int timer = 0;
 	public static int conattempts = 0;
