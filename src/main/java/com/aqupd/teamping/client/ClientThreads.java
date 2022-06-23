@@ -79,7 +79,7 @@ public class ClientThreads {
             jo.add("lifetime", new JsonPrimitive(faketime));
             LOGGER.info("received ping " + jo);
             pings.add(jo);
-            Minecraft.getMinecraft().getSoundHandler().playSound(new PingSound(player));
+            Minecraft.getMinecraft().getSoundHandler().playSound(new PingSound(Minecraft.getMinecraft().thePlayer));
           }
         } while (!closed);
         closed = true;
