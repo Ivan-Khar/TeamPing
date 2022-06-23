@@ -6,15 +6,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import java.io.*;
+import java.math.BigInteger;
 import java.net.Socket;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Session;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 public class ClientThreads {
   private final Socket socket;
@@ -24,10 +26,14 @@ public class ClientThreads {
   private long lastinteraction = 0;
   private boolean init = true;
   private boolean closed = false;
+  private String serverip;
 
-  public ClientThreads(Socket socket, EntityPlayer entity) {
+  private final OkHttpClient httpClient = new OkHttpClient();
+  public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+  public ClientThreads(Socket socket, EntityPlayer entity, String sip) {
     this.socket = socket;
     this.player = entity;
+    this.serverip = sip;
     new Reader().start();
     new Writer().start();
     conattempts = 0;
@@ -112,18 +118,20 @@ public class ClientThreads {
             } else if (step == 4 && (System.currentTimeMillis() - lastinteraction) > 250) {
               data.add("name", new JsonPrimitive(player.getName()));
               String token = Minecraft.getMinecraft().getSession().getToken();
-              String serverid = UUID.randomUUID().toString();
+              String serverid = hash(serverip);
 
               JsonObject jsonObject = new JsonObject();
               jsonObject.add("accessToken", new JsonPrimitive(token));
-              jsonObject.add("selectedProfile", new JsonPrimitive(player.getUniqueID().toString()));
+              jsonObject.add("selectedProfile", new JsonPrimitive(player.getUniqueID().toString().replace("-", "")));
               jsonObject.add("serverId", new JsonPrimitive(serverid));
 
-              URLConnection connection = new URL("https://sessionserver.mojang.com/session/minecraft/join").openConnection();
-              connection.setDoOutput(true);
-              connection.addRequestProperty("Content-Type", "application/json");
-              connection.setRequestProperty("Content-Length", String.valueOf(jsonObject.toString().length()));
-              connection.getOutputStream().write(jsonObject.toString().getBytes(StandardCharsets.UTF_8));
+              String query = jsonObject.toString();
+              RequestBody body = RequestBody.create(query, JSON);
+              Request request = new Request.Builder()
+                .url("https://sessionserver.mojang.com/session/minecraft/join")
+                .post(body)
+                .build();
+              httpClient.newCall(request).execute();
 
               data.add("serverid", new JsonPrimitive(serverid));
               LOGGER.info(step + " " + data);
@@ -146,5 +154,20 @@ public class ClientThreads {
         LOGGER.error("Client writer exception", ex);
       }
     }
+  }
+
+  public static String hash(String str) {
+    try {
+      byte[] digest = digest(str);
+      return new BigInteger(digest).toString(16);
+    } catch (NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static byte[] digest(String str) throws NoSuchAlgorithmException {
+    MessageDigest md = MessageDigest.getInstance("SHA-1");
+    byte[] strBytes = str.getBytes(StandardCharsets.UTF_8);
+    return md.digest(strBytes);
   }
 }

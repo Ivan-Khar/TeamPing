@@ -41,9 +41,11 @@ repositories {
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
     maven { url 'https://maven.minecraftforge.net/' }
+    mavenCentral()
 }
 
 dependencies {
+    include "com.squareup.okhttp3:okhttp:4.10.0"
     include("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
         exclude module: "guava"
         exclude module: "commons-io"

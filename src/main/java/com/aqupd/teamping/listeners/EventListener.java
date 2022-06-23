@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.net.Socket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -21,6 +22,8 @@ public class EventListener {
 	public static float ticks;
 	public static Socket socket;
 	private boolean connectedtoserver = false;
+	private String serverip = "";
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onRenderTickEvent(TickEvent.RenderTickEvent event){
@@ -32,7 +35,6 @@ public class EventListener {
 	public void onPlayerJoinServer(FMLNetworkEvent.ClientConnectedToServerEvent event){
 		if (!event.isLocal) {
 			connectedtoserver = true;
-			System.out.println(event.manager.getRemoteAddress());
 		}
 	}
 
@@ -46,8 +48,9 @@ public class EventListener {
 				if (!connecting && !stoppingmc) {
 					connecting = true;
 					try {
+						serverip = Minecraft.getMinecraft().getCurrentServerData().serverIP;
 						socket = new Socket("mcmod.theaq.one", 28754);
-						new ClientThreads(socket, event.player);
+						new ClientThreads(socket, event.player, serverip);
 					} catch (IOException ex) {
 						connecting = false;
 						LOGGER.error("Server error", ex);
