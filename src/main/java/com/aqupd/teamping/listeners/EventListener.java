@@ -9,16 +9,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EventListener {
 	public static float ticks;
 	public static Socket socket;
+	private boolean connectedtoserver = false;
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onRenderTickEvent(TickEvent.RenderTickEvent event){
@@ -27,20 +28,32 @@ public class EventListener {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
+	public void onPlayerJoinServer(FMLNetworkEvent.ClientConnectedToServerEvent event){
+		if (!event.isLocal) {
+			connectedtoserver = true;
+			System.out.println(event.manager.getRemoteAddress());
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
 	public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
 		if (time == 0) time = System.currentTimeMillis();
-		if ((System.currentTimeMillis() - time) > 3000 && conattempts < 3 && !connecting && !stoppingmc) {
-			connecting = true;
-			try {
-				socket = new Socket("mcmod.theaq.one", 28754);
-				new ClientThreads(socket, event.player);
-			} catch (IOException ex) {
-				connecting = false;
-				LOGGER.error("Server error", ex);
-			}
+		if (connectedtoserver) {
+			connectedtoserver = false;
+			if (!connecting && !stoppingmc) {
+				connecting = true;
+				try {
+					socket = new Socket("mcmod.theaq.one", 28754);
+					new ClientThreads(socket, event.player);
+				} catch (IOException ex) {
+					connecting = false;
+					LOGGER.error("Server error", ex);
+				}
 
-			time = System.currentTimeMillis();
-			conattempts++;
+				time = System.currentTimeMillis();
+				conattempts++;
+			}
 		}
 	}
 
