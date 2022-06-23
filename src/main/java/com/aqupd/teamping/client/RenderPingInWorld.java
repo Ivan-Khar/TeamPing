@@ -73,8 +73,8 @@ public class RenderPingInWorld {
 
             if(dist2d < 6) trpy = trpy/2;
 
-            drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy*2);
-            drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy*2/3);
+            drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy*4);
+            drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy*2);
 
             float bx = jblock.get(0).getAsFloat() + 0.5F;
             float by = jblock.get(1).getAsFloat() + 0.5F;
@@ -197,7 +197,7 @@ public class RenderPingInWorld {
     Tessellator tes = Tessellator.getInstance();
     Vec3 player = new Vec3(e.posX - bx, e.posY - by + e.getEyeHeight(), e.posZ - bz);
 
-    double ypos = oldy + (newy - oldy) * pticks;
+    double ypos = 1 + oldy + (newy - oldy) * pticks;
 
     float minU1 = minU / resolution;
     float maxU1 = maxU / resolution;
@@ -210,8 +210,8 @@ public class RenderPingInWorld {
 
     GL11.glLineWidth(2);
     wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-    wr.pos(0, bp.getY(), 0).color(red, green, blue, transparency).endVertex();
-    wr.pos(0, ypos + 1.5, 0).color(red, green, blue, transparency*2).endVertex();
+    wr.pos(0, bp.getY(), 0).color(red, green, blue, transparency*4).endVertex();
+    wr.pos(0, ypos + 1.5, 0).color(red, green, blue, transparency*4).endVertex();
     tes.draw();
 
     GlStateManager.enableTexture2D();

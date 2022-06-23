@@ -7,8 +7,14 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import java.io.*;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.Session;
 
 public class ClientThreads {
   private final Socket socket;
@@ -63,7 +69,7 @@ public class ClientThreads {
             }
           } else {
             int faketime = 31 * 2 + 500;
-            JsonObject jo = JsonParser.parseString(text).getAsJsonObject();
+            JsonObject jo = new JsonParser().parse(text).getAsJsonObject();
             jo.add("lifetime", new JsonPrimitive(faketime));
             LOGGER.info("received ping " + jo);
             pings.add(jo);
@@ -105,7 +111,21 @@ public class ClientThreads {
               step++;
             } else if (step == 4 && (System.currentTimeMillis() - lastinteraction) > 250) {
               data.add("name", new JsonPrimitive(player.getName()));
-              data.add("uuid", new JsonPrimitive(player.getUniqueID().toString()));
+              String token = Minecraft.getMinecraft().getSession().getToken();
+              String serverid = UUID.randomUUID().toString();
+
+              JsonObject jsonObject = new JsonObject();
+              jsonObject.add("accessToken", new JsonPrimitive(token));
+              jsonObject.add("selectedProfile", new JsonPrimitive(player.getUniqueID().toString()));
+              jsonObject.add("serverId", new JsonPrimitive(serverid));
+
+              URLConnection connection = new URL("https://sessionserver.mojang.com/session/minecraft/join").openConnection();
+              connection.setDoOutput(true);
+              connection.addRequestProperty("Content-Type", "application/json");
+              connection.setRequestProperty("Content-Length", String.valueOf(jsonObject.toString().length()));
+              connection.getOutputStream().write(jsonObject.toString().getBytes(StandardCharsets.UTF_8));
+
+              data.add("serverid", new JsonPrimitive(serverid));
               LOGGER.info(step + " " + data);
               writer.println(data);
               step++;
@@ -114,7 +134,7 @@ public class ClientThreads {
               writer.println("YES");
               init = false;
             }
-          } else if(ping1.size() != 0){
+          } else if(!ping1.equals(new JsonObject())){
             LOGGER.info("send ping " + ping1);
             writer.println(ping1);
             ping = new JsonObject();

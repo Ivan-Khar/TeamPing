@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.net.Socket;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -38,21 +39,22 @@ public class EventListener {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
-		if (time == 0) time = System.currentTimeMillis();
-		if (connectedtoserver) {
-			connectedtoserver = false;
-			if (!connecting && !stoppingmc) {
-				connecting = true;
-				try {
-					socket = new Socket("mcmod.theaq.one", 28754);
-					new ClientThreads(socket, event.player);
-				} catch (IOException ex) {
-					connecting = false;
-					LOGGER.error("Server error", ex);
+		if (event.player instanceof EntityPlayerSP) {
+			if (time == 0) time = System.currentTimeMillis();
+			if (connectedtoserver) {
+				connectedtoserver = false;
+				if (!connecting && !stoppingmc) {
+					connecting = true;
+					try {
+						socket = new Socket("mcmod.theaq.one", 28754);
+						new ClientThreads(socket, event.player);
+					} catch (IOException ex) {
+						connecting = false;
+						LOGGER.error("Server error", ex);
+					}
+					time = System.currentTimeMillis();
+					conattempts++;
 				}
-
-				time = System.currentTimeMillis();
-				conattempts++;
 			}
 		}
 	}
