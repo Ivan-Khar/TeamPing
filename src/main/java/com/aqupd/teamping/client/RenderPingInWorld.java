@@ -203,7 +203,7 @@ public class RenderPingInWorld {
     double sinyaw = sin(yaw);
     double cosyaw = cos(yaw);
 
-    GL11.glLineWidth(2);
+    GL11.glLineWidth(4);
     wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
     wr.pos(0, bp.getY(), 0).color(red, green, blue, transparency*4).endVertex();
     wr.pos(0, ypos + 1.5, 0).color(red, green, blue, transparency*4).endVertex();

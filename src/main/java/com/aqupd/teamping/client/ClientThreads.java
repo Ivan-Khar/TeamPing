@@ -52,12 +52,8 @@ public class ClientThreads {
         lastinteraction = System.currentTimeMillis();
 
         do {
-          try {
-            text = reader.readLine();
-          } catch (SocketTimeoutException ex){
-            break;
-          }
-
+          text = reader.readLine();
+          if (text == null) break;
           if (init) {
             if (step == 1 && text.equals("YES")) {
               LOGGER.info(step);
@@ -85,7 +81,7 @@ public class ClientThreads {
             jo.add("lifetime", new JsonPrimitive(faketime));
             LOGGER.info("received ping " + jo);
             pings.add(jo);
-            Minecraft.getMinecraft().getSoundHandler().playSound(new PingSound(Minecraft.getMinecraft().thePlayer));
+            playsound=true;
           }
         } while (!closed);
         closed = true;
@@ -162,6 +158,8 @@ public class ClientThreads {
         closed = true;
         connecting = false;
       } catch (IOException ex) {
+        closed = true;
+        connecting = false;
         LOGGER.error("Client writer exception", ex);
       }
     }

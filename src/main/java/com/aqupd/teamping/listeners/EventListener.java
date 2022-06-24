@@ -24,7 +24,7 @@ public class EventListener {
 	private boolean connectedtoserver = false;
 	private boolean debug = false;
 	public static boolean connecting = false;
-
+	public static boolean playsound = false;
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onRenderTickEvent(TickEvent.RenderTickEvent event){
@@ -50,7 +50,7 @@ public class EventListener {
 					connecting = true;
 					try {
 						String serverip = (debug ? "localhost" : Minecraft.getMinecraft().getCurrentServerData().serverIP);
-						socket = new Socket(debug ? "localhost" : "mcmod.theaq.one", 28754);
+						socket = new Socket(debug ? "localhost" : "vps.theaq.one", 28754);
 						new ClientThreads(socket, event.player, serverip, debug);
 					} catch (IOException ex) {
 						connecting = false;
@@ -66,6 +66,11 @@ public class EventListener {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onClientTickEvent(TickEvent.ClientTickEvent event) {
+		if(playsound) {
+			Minecraft.getMinecraft().thePlayer.playSound("minecraft:fireworks.blast_far", 0.5F, 1F);
+			playsound = !playsound;
+		}
+
 		Iterator<JsonObject> pingsIter = pings.iterator();
 		while (pingsIter.hasNext()) {
 			JsonObject data = pingsIter.next();
