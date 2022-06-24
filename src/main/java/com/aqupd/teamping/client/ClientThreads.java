@@ -1,6 +1,7 @@
 package com.aqupd.teamping.client;
 
 import static com.aqupd.teamping.TeamPing.*;
+import static com.aqupd.teamping.listeners.EventListener.*;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,6 +9,7 @@ import com.google.gson.JsonPrimitive;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,13 +29,15 @@ public class ClientThreads {
   private boolean init = true;
   private boolean closed = false;
   private String serverip;
+  private boolean debug;
 
   private final OkHttpClient httpClient = new OkHttpClient();
   public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-  public ClientThreads(Socket socket, EntityPlayer entity, String sip) {
+  public ClientThreads(Socket socket, EntityPlayer entity, String sip, Boolean debug) {
     this.socket = socket;
     this.player = entity;
     this.serverip = sip;
+    this.debug = debug;
     new Reader().start();
     new Writer().start();
     conattempts = 0;
@@ -44,13 +48,15 @@ public class ClientThreads {
       try {
         InputStream input = socket.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
         String text;
         lastinteraction = System.currentTimeMillis();
 
         do {
-          text = reader.readLine();
-          if (text == null) break;
+          try {
+            text = reader.readLine();
+          } catch (SocketTimeoutException ex){
+            break;
+          }
 
           if (init) {
             if (step == 1 && text.equals("YES")) {
@@ -102,6 +108,8 @@ public class ClientThreads {
         OutputStream output = socket.getOutputStream();
         PrintWriter writer = new PrintWriter(output, true);
         JsonObject data = new JsonObject();
+        long pingtime = System.currentTimeMillis();
+
         do {
           JsonObject ping1 = new JsonObject();
           if (socket.isClosed()) break;
@@ -118,21 +126,21 @@ public class ClientThreads {
             } else if (step == 4 && (System.currentTimeMillis() - lastinteraction) > 250) {
               data.add("name", new JsonPrimitive(player.getName()));
               String token = Minecraft.getMinecraft().getSession().getToken();
-              String serverid = hash(serverip);
+              String serverid = (debug ? "localhost" : hash(serverip));
 
               JsonObject jsonObject = new JsonObject();
               jsonObject.add("accessToken", new JsonPrimitive(token));
               jsonObject.add("selectedProfile", new JsonPrimitive(player.getUniqueID().toString().replace("-", "")));
               jsonObject.add("serverId", new JsonPrimitive(serverid));
-
-              String query = jsonObject.toString();
-              RequestBody body = RequestBody.create(query, JSON);
-              Request request = new Request.Builder()
-                .url("https://sessionserver.mojang.com/session/minecraft/join")
-                .post(body)
-                .build();
-              httpClient.newCall(request).execute();
-
+              if (!debug) {
+                String query = jsonObject.toString();
+                RequestBody body = RequestBody.create(query, JSON);
+                Request request = new Request.Builder()
+                  .url("https://sessionserver.mojang.com/session/minecraft/join")
+                  .post(body)
+                  .build();
+                httpClient.newCall(request).execute();
+              }
               data.add("serverid", new JsonPrimitive(serverid));
               LOGGER.info(step + " " + data);
               writer.println(data);
@@ -142,7 +150,10 @@ public class ClientThreads {
               writer.println("YES");
               init = false;
             }
-          } else if(!ping1.equals(new JsonObject())){
+          } else if ((System.currentTimeMillis() - pingtime) > 1000) {
+            writer.println("PING");
+            pingtime = System.currentTimeMillis();
+          } else if (!ping1.equals(new JsonObject())) {
             LOGGER.info("send ping " + ping1);
             writer.println(ping1);
             ping = new JsonObject();

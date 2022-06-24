@@ -23,11 +23,10 @@ public class TeamPing {
 	public static final String MOD_NAME = "TeamPing";
 	public static final String VERSION = "1.0";
 	public static final Logger LOGGER = LogManager.getLogger("AqUpd's " + MOD_NAME);
-	public static List<JsonElement> pings = new ArrayList<>();
+	public static List<JsonObject> pings = new ArrayList<>();
 	public static JsonObject ping;
 	public static boolean guimenu = false;
 	public static boolean stoppingmc = false;
-	public static boolean connecting = false;
 	public static int timer = 0;
 	public static int conattempts = 0;
 	public static long lastpingtime = 0;

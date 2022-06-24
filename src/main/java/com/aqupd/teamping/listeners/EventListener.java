@@ -5,10 +5,10 @@ import static com.aqupd.teamping.setup.Registrations.keyBindings;
 
 import com.aqupd.teamping.client.ClientThreads;
 import com.aqupd.teamping.client.RenderGUI;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Iterator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -22,7 +22,8 @@ public class EventListener {
 	public static float ticks;
 	public static Socket socket;
 	private boolean connectedtoserver = false;
-	private String serverip = "";
+	private boolean debug = false;
+	public static boolean connecting = false;
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -33,7 +34,7 @@ public class EventListener {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onPlayerJoinServer(FMLNetworkEvent.ClientConnectedToServerEvent event){
-		if (!event.isLocal) {
+		if ((!event.isLocal && !connecting) || (!connecting && debug)) {
 			connectedtoserver = true;
 		}
 	}
@@ -48,9 +49,9 @@ public class EventListener {
 				if (!connecting && !stoppingmc) {
 					connecting = true;
 					try {
-						serverip = Minecraft.getMinecraft().getCurrentServerData().serverIP;
-						socket = new Socket("mcmod.theaq.one", 28754);
-						new ClientThreads(socket, event.player, serverip);
+						String serverip = (debug ? "localhost" : Minecraft.getMinecraft().getCurrentServerData().serverIP);
+						socket = new Socket(debug ? "localhost" : "mcmod.theaq.one", 28754);
+						new ClientThreads(socket, event.player, serverip, debug);
 					} catch (IOException ex) {
 						connecting = false;
 						LOGGER.error("Server error", ex);
@@ -65,10 +66,14 @@ public class EventListener {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onClientTickEvent(TickEvent.ClientTickEvent event) {
-		for (JsonElement je: pings) {
-			JsonObject data = je.getAsJsonObject();
+		Iterator<JsonObject> pingsIter = pings.iterator();
+		while (pingsIter.hasNext()) {
+			JsonObject data = pingsIter.next();
 			int lifetime = data.get("lifetime").getAsInt() - 1;
 			data.addProperty("lifetime", lifetime);
+			if(lifetime <= 0){
+				pingsIter.remove();
+			}
 		}
 
 		if(guimenu && timer < 15) timer++;

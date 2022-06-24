@@ -42,8 +42,7 @@ public class RenderPingInWorld {
       double newy = e.posY;
 
       if(pings.size() != 0) {
-        for (JsonElement je: pings) {
-          JsonObject data = je.getAsJsonObject();
+        for (JsonObject data: pings) {
           JsonArray jblock = data.get("bp").getAsJsonArray();
           JsonArray jcolor = data.get("color").getAsJsonArray();
           String type = data.get("type").getAsString();
@@ -94,10 +93,6 @@ public class RenderPingInWorld {
               case "no":
                 renderPing(mc, wr, e, trpy, 64, 32, 64, 32, 64, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp, oldy, newy);
             }
-          }
-          int lifetime = data.get("lifetime").getAsInt();
-          if (lifetime <= 0) {
-            pings.remove(je);
           }
         }
       }
