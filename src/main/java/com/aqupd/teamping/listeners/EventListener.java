@@ -34,8 +34,8 @@ public class EventListener {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onPlayerJoinServer(FMLNetworkEvent.ClientConnectedToServerEvent event){
-		if ((!event.isLocal && !connecting) || (!connecting && debug)) {
-			connectedtoserver = true;
+		if (!event.isLocal || debug) {
+			if (!connecting) connectedtoserver = true;
 		}
 	}
 
