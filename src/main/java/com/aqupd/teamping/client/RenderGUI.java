@@ -4,7 +4,6 @@ import static com.aqupd.teamping.TeamPing.*;
 import static com.aqupd.teamping.client.PingBlock.*;
 import static java.lang.Math.*;
 
-import java.awt.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,6 +14,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 public class RenderGUI {
+  private static boolean menu;
+
   public static void render() {
     Minecraft mc = Minecraft.getMinecraft();
     try {
@@ -87,7 +88,8 @@ public class RenderGUI {
       int a7 = 0;
       int a8 = 0;
       double sensitivity = pow(mc.gameSettings.mouseSensitivity / 4 + 0.2, 3) * 8.0F;
-      if(guimenu){
+      if(guimenu || menu){
+        menu = true;
         cX = cX + mc.mouseHelper.deltaX * sensitivity;
         cY = cY - mc.mouseHelper.deltaY * sensitivity;
         cX = min(cX, 40);
@@ -101,25 +103,35 @@ public class RenderGUI {
         if(dist > 15){
           if((angle <= 22.5) || (angle > 337.5)){
             a1 = darkangle;
-            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("here");
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("here");
+            if (!guimenu) menu=false;
           } else if(angle <= 67.5){
             a2 = darkangle;
-            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("danger");
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("danger");
+            if (!guimenu) menu=false;
           } else if(angle <= 112.5){
             a3 = darkangle;
-            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("question");
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("question");
+            if (!guimenu) menu=false;
           } else if(angle <= 157.5){
             a4 = darkangle;
-            if(mc.gameSettings.keyBindAttack.isKeyDown()) pingBlock("no");
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("no");
+            if (!guimenu) menu=false;
           } else if(angle <= 202.5){
             a5 = darkangle;
+            if (!guimenu) menu=false;
           } else if(angle <= 247.5){
             a6 = darkangle;
+            if (!guimenu) menu=false;
           } else if(angle <= 292.5){
             a7 = darkangle;
+            if (!guimenu) menu=false;
           } else if(angle <= 337.5){
             a8 = darkangle;
+            if (!guimenu) menu=false;
           }
+        } else {
+          if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("");
         }
         wr.begin(GL11.GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
         GL11.glPointSize(4);

@@ -22,7 +22,7 @@ public class EventListener {
 	public static float ticks;
 	public static Socket socket;
 	private boolean connectedtoserver = false;
-	private boolean debug = false;
+	private boolean debug = true;
 	public static boolean connecting = false;
 	public static boolean playsound = false;
 	@SideOnly(Side.CLIENT)

@@ -213,16 +213,16 @@ public class RenderPingInWorld {
     mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/worldpings.png"));
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 
-    if(ypos - bp.getY()>= -1) {
-      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-left
-      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-left
-      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-right
-      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-right
+    if((ypos - bp.getY()) >= -1) {
+      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU1, maxV1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-left
+      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU1, minV1).color(red, green, blue, transparency * 8).endVertex(); //Top-left
+      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU1, minV1).color(red, green, blue, transparency * 8).endVertex(); //Top-right
+      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU1, maxV1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-right
     } else {
-      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-left
-      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-left
-      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU1, maxV1).color(255, 255, 255, transparency * 8).endVertex(); //Top-right
-      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU1, minV1).color(255, 255, 255, transparency * 8).endVertex(); //Bottom-right
+      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU1, minV1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-left
+      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU1, maxV1).color(red, green, blue, transparency * 8).endVertex(); //Top-left
+      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU1, maxV1).color(red, green, blue, transparency * 8).endVertex(); //Top-right
+      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU1, minV1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-right
     }
     tes.draw();
     GlStateManager.disableTexture2D();

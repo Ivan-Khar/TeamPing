@@ -9,7 +9,6 @@ import com.google.gson.JsonPrimitive;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
