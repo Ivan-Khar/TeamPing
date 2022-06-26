@@ -13,8 +13,8 @@ import java.util.Iterator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -25,7 +25,7 @@ public class EventListener {
 	public static Socket socket;
 	private boolean connectedtoserver = false;
 	private boolean clearpings = false;
-	private final boolean debug = true;
+	private final boolean debug = false;
 	public static boolean connecting = false;
 	public static boolean playsound = false;
 
@@ -40,6 +40,16 @@ public class EventListener {
 	public void onPlayerJoinServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
 		if (!event.isLocal || debug) {
 			if (!connecting) connectedtoserver = true;
+		}
+	}
+
+	private long lastjoineventusage = 0;
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void someEvent(EntityJoinWorldEvent event) {
+		if (event.entity instanceof EntityPlayerSP && (System.currentTimeMillis() - lastjoineventusage) > 250) {
+			clearpings = true;
+			lastjoineventusage = System.currentTimeMillis();
 		}
 	}
 
@@ -78,9 +88,8 @@ public class EventListener {
 		Iterator<JsonObject> pingsIter = pings.iterator();
 		while (pingsIter.hasNext()) {
 			JsonObject data = pingsIter.next();
-			int lifetime = data.get("lifetime").getAsInt() - 1;
-			data.addProperty("lifetime", lifetime);
-			if (lifetime <= 0) {
+			long time = data.get("time").getAsLong();
+			if ((System.currentTimeMillis() - time) > 15000) {
 				pingsIter.remove();
 			}
 		}
@@ -104,14 +113,6 @@ public class EventListener {
 	public void onGuiRenderEvent(RenderGameOverlayEvent.Pre event) {
 		if (event.type == RenderGameOverlayEvent.ElementType.BOSSHEALTH && (guimenu || timer > 0)) {
 			RenderGUI.render();
-		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public void onWorldChangeEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
-		if (event.player instanceof EntityPlayerSP) {
-			clearpings = true;
 		}
 	}
 }

@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderGUI {
   private static boolean menu;
+  private static final String[] pingidnames = new String[]{"here", "qhere", "notice", "question", "no", "yes", "defend", "attack"};
 
   public static void render() {
     Minecraft mc = Minecraft.getMinecraft();
@@ -80,9 +81,9 @@ public class RenderGUI {
       wr.pos(-startx+0.5, -starty, 0.0D).color(64, 64, 64, 127).endVertex();  //Top-Left
       tes.draw();
 
-      int a1, a2, a3, a4, a5, a6, a7, a8;
-      a1 = a2 = a3 = a4 = a5 = a6 = a7 = a8 = 0;
       double sensitivity = pow(mc.gameSettings.mouseSensitivity / 4 + 0.2, 3) * 8.0F;
+      int pingid = -1;
+
       if (guimenu || menu) {
         menu = true;
         cX = cX + mc.mouseHelper.deltaX * sensitivity;
@@ -92,43 +93,12 @@ public class RenderGUI {
         cY = min(cY, 40);
         cY = max(cY, -40);
         double angle = toDegrees((atan2(-cX, cY) + PI));
-
         double dist = sqrt(pow(cX, 2) + pow(cY, 2));
-        int darkangle = 128;
         if (dist > 15) {
-          if ((angle <= 22.5) || (angle > 337.5)) {
-            a1 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("here");
-            if (!guimenu) menu=false;
-          } else if (angle <= 67.5) {
-            a2 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("qhere");
-            if (!guimenu) menu=false;
-          } else if (angle <= 112.5) {
-            a3 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("notice");
-            if (!guimenu) menu=false;
-          } else if (angle <= 157.5) {
-            a4 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("question");
-            if (!guimenu) menu=false;
-          } else if (angle <= 202.5) {
-            a5 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("no");
-            if (!guimenu) menu=false;
-          } else if (angle <= 247.5) {
-            a6 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("yes");
-            if (!guimenu) menu=false;
-          } else if (angle <= 292.5) {
-            a7 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("defend");
-            if (!guimenu) menu=false;
-          } else if (angle <= 337.5) {
-            a8 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("attack");
-            if (!guimenu) menu=false;
-          }
+          pingid = (int) floor((angle-22.5)/45) + 1;
+          if (pingid == 8) pingid = 0;
+          if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock(pingidnames[pingid]);
+          if (!guimenu) menu=false;
         } else {
           if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("");
         }
@@ -144,40 +114,40 @@ public class RenderGUI {
       if (timer >= 5) {
         int alpha = 6 * (timer-5);
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        wr.pos(linewidth, -8, 0.0D).color(32, 32, 32, alpha + a3).endVertex();         //Right 3
-        wr.pos(linewidth, 8, 0.0D).color(32, 32, 32, alpha + a3).endVertex();          //Right 3
-        wr.pos(linewidth+16, 8, 0.0D).color(32, 32, 32, alpha + a3).endVertex();    //Right 3
-        wr.pos(linewidth+16, -8, 0.0D).color(32, 32, 32, alpha + a3).endVertex();   //Right 3
-        wr.pos(-8, -linewidth-16, 0.0D).color(32, 32, 32, alpha + a1).endVertex();  //Top 1
-        wr.pos(-8, -linewidth, 0.0D).color(32, 32, 32, alpha + a1).endVertex();        //Top 1
-        wr.pos(8, -linewidth, 0.0D).color(32, 32, 32, alpha + a1).endVertex();         //Top 1
-        wr.pos(8, -linewidth-16, 0.0D).color(32, 32, 32, alpha + a1).endVertex();   //Top 1
-        wr.pos(-linewidth-16, -8, 0.0D).color(32, 32, 32, alpha + a7).endVertex();  //Left 7
-        wr.pos(-linewidth-16, 8, 0.0D).color(32, 32, 32, alpha + a7).endVertex();   //Left 7
-        wr.pos(-linewidth, 8, 0.0D).color(32, 32, 32, alpha + a7).endVertex();         //Left 7
-        wr.pos(-linewidth, -8, 0.0D).color(32, 32, 32, alpha + a7).endVertex();        //Left 7
-        wr.pos(-8, linewidth, 0.0D).color(32, 32, 32, alpha + a5).endVertex();         //Bottom 5
-        wr.pos(-8, linewidth+16, 0.0D).color(32, 32, 32, alpha + a5).endVertex();   //Bottom 5
-        wr.pos(8, linewidth+16, 0.0D).color(32, 32, 32, alpha + a5).endVertex();    //Bottom 5
-        wr.pos(8, linewidth, 0.0D).color(32, 32, 32, alpha + a5).endVertex();          //Bottom 5
+        wr.pos(linewidth, -8, 0.0D).color(32, 32, 32, (pingid == 2) ? alpha + 128 : alpha).endVertex();         //Right 2
+        wr.pos(linewidth, 8, 0.0D).color(32, 32, 32, (pingid == 2) ? alpha + 128 : alpha).endVertex();          //Right 2
+        wr.pos(linewidth+16, 8, 0.0D).color(32, 32, 32, (pingid == 2) ? alpha + 128 : alpha).endVertex();    //Right 2
+        wr.pos(linewidth+16, -8, 0.0D).color(32, 32, 32, (pingid == 2) ? alpha + 128 : alpha).endVertex();   //Right 2
+        wr.pos(-8, -linewidth-16, 0.0D).color(32, 32, 32, (pingid == 0) ? alpha + 128 : alpha).endVertex();  //Top 0
+        wr.pos(-8, -linewidth, 0.0D).color(32, 32, 32, (pingid == 0) ? alpha + 128 : alpha).endVertex();        //Top 0
+        wr.pos(8, -linewidth, 0.0D).color(32, 32, 32, (pingid == 0) ? alpha + 128 : alpha).endVertex();         //Top 0
+        wr.pos(8, -linewidth-16, 0.0D).color(32, 32, 32, (pingid == 0) ? alpha + 128 : alpha).endVertex();   //Top 0
+        wr.pos(-linewidth-16, -8, 0.0D).color(32, 32, 32, (pingid == 6) ? alpha + 128 : alpha).endVertex();  //Left 6
+        wr.pos(-linewidth-16, 8, 0.0D).color(32, 32, 32, (pingid == 6) ? alpha + 128 : alpha).endVertex();   //Left 6
+        wr.pos(-linewidth, 8, 0.0D).color(32, 32, 32, (pingid == 6) ? alpha + 128 : alpha).endVertex();         //Left 6
+        wr.pos(-linewidth, -8, 0.0D).color(32, 32, 32, (pingid == 6) ? alpha + 128 : alpha).endVertex();        //Left 6
+        wr.pos(-8, linewidth, 0.0D).color(32, 32, 32, (pingid == 4) ? alpha + 128 : alpha).endVertex();         //Bottom 4
+        wr.pos(-8, linewidth+16, 0.0D).color(32, 32, 32, (pingid == 4) ? alpha + 128 : alpha).endVertex();   //Bottom 4
+        wr.pos(8, linewidth+16, 0.0D).color(32, 32, 32, (pingid == 4) ? alpha + 128 : alpha).endVertex();    //Bottom 4
+        wr.pos(8, linewidth, 0.0D).color(32, 32, 32, (pingid == 4) ? alpha + 128 : alpha).endVertex();          //Bottom 4
         midx = midx - 0.25;
         midy = midy - 0.25;
-        wr.pos(midx - mos, midy, 0).color(32, 32, 32, alpha + a4).endVertex();         //Bottom-Right 4
-        wr.pos(midx, midy + mos, 0).color(32, 32, 32, alpha + a4).endVertex();         //Bottom-Right 4
-        wr.pos(midx + mos, midy, 0).color(32, 32, 32, alpha + a4).endVertex();         //Bottom-Right 4
-        wr.pos(midx, midy - mos, 0).color(32, 32, 32, alpha + a4).endVertex();         //Bottom-Right 4
-        wr.pos(-midx - mos, midy, 0).color(32, 32, 32, alpha + a6).endVertex();        //Bottom-Left 6
-        wr.pos(-midx, midy + mos, 0).color(32, 32, 32, alpha + a6).endVertex();        //Bottom-Left 6
-        wr.pos(-midx + mos, midy, 0).color(32, 32, 32, alpha + a6).endVertex();        //Bottom-Left 6
-        wr.pos(-midx, midy - mos, 0).color(32, 32, 32, alpha + a6).endVertex();        //Bottom-Left 6
-        wr.pos(-midx - mos, -midy, 0).color(32, 32, 32, alpha + a8).endVertex();       //Top-Left 8
-        wr.pos(-midx, -midy + mos, 0).color(32, 32, 32, alpha + a8).endVertex();       //Top-Left 8
-        wr.pos(-midx + mos, -midy, 0).color(32, 32, 32, alpha + a8).endVertex();       //Top-Left 8
-        wr.pos(-midx, -midy - mos, 0).color(32, 32, 32, alpha + a8).endVertex();       //Top-Left 8
-        wr.pos(midx - mos, -midy, 0).color(32, 32, 32, alpha + a2).endVertex();        //Top-Right 2
-        wr.pos(midx, -midy + mos, 0).color(32, 32, 32, alpha + a2).endVertex();        //Top-Right 2
-        wr.pos(midx + mos, -midy, 0).color(32, 32, 32, alpha + a2).endVertex();        //Top-Right 2
-        wr.pos(midx, -midy - mos, 0).color(32, 32, 32, alpha + a2).endVertex();        //Top-Right 2
+        wr.pos(midx - mos, midy, 0).color(32, 32, 32, (pingid == 3) ? alpha + 128 : alpha).endVertex();         //Bottom-Right 4
+        wr.pos(midx, midy + mos, 0).color(32, 32, 32, (pingid == 3) ? alpha + 128 : alpha).endVertex();         //Bottom-Right 4
+        wr.pos(midx + mos, midy, 0).color(32, 32, 32, (pingid == 3) ? alpha + 128 : alpha).endVertex();         //Bottom-Right 4
+        wr.pos(midx, midy - mos, 0).color(32, 32, 32, (pingid == 3) ? alpha + 128 : alpha).endVertex();         //Bottom-Right 4
+        wr.pos(-midx - mos, midy, 0).color(32, 32, 32, (pingid == 5) ? alpha + 128 : alpha).endVertex();        //Bottom-Left 6
+        wr.pos(-midx, midy + mos, 0).color(32, 32, 32, (pingid == 5) ? alpha + 128 : alpha).endVertex();        //Bottom-Left 6
+        wr.pos(-midx + mos, midy, 0).color(32, 32, 32, (pingid == 5) ? alpha + 128 : alpha).endVertex();        //Bottom-Left 6
+        wr.pos(-midx, midy - mos, 0).color(32, 32, 32, (pingid == 5) ? alpha + 128 : alpha).endVertex();        //Bottom-Left 6
+        wr.pos(-midx - mos, -midy, 0).color(32, 32, 32, (pingid == 7) ? alpha + 128 : alpha).endVertex();       //Top-Left 8
+        wr.pos(-midx, -midy + mos, 0).color(32, 32, 32, (pingid == 7) ? alpha + 128 : alpha).endVertex();       //Top-Left 8
+        wr.pos(-midx + mos, -midy, 0).color(32, 32, 32, (pingid == 7) ? alpha + 128 : alpha).endVertex();       //Top-Left 8
+        wr.pos(-midx, -midy - mos, 0).color(32, 32, 32, (pingid == 7) ? alpha + 128 : alpha).endVertex();       //Top-Left 8
+        wr.pos(midx - mos, -midy, 0).color(32, 32, 32, (pingid == 1) ? alpha + 128 : alpha).endVertex();        //Top-Right 2
+        wr.pos(midx, -midy + mos, 0).color(32, 32, 32, (pingid == 1) ? alpha + 128 : alpha).endVertex();        //Top-Right 2
+        wr.pos(midx + mos, -midy, 0).color(32, 32, 32, (pingid == 1) ? alpha + 128 : alpha).endVertex();        //Top-Right 2
+        wr.pos(midx, -midy - mos, 0).color(32, 32, 32, (pingid == 1) ? alpha + 128 : alpha).endVertex();        //Top-Right 2
         tes.draw();
 
         double minU;

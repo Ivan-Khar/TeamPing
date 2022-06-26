@@ -75,9 +75,8 @@ public class ClientThreads {
               lastinteraction = System.currentTimeMillis();
             }
           } else {
-            int faketime = 31 * 2 + 500;
             JsonObject jo = new JsonParser().parse(text).getAsJsonObject();
-            jo.add("lifetime", new JsonPrimitive(faketime));
+            jo.add("time", new JsonPrimitive(System.currentTimeMillis()));
             LOGGER.info("received ping " + jo);
             pings.add(jo);
             playsound=true;

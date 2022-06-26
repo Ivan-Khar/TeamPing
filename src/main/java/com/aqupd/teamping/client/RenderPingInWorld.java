@@ -60,22 +60,20 @@ public class RenderPingInWorld {
             double iPY = -interpPosY;
             double iPZ = -interpPosZ;
             wr.setTranslation(iPX, iPY, iPZ);
-
             GL11.glLineWidth((float) (10 / dist));
             AxisAlignedBB aabb = new AxisAlignedBB(bp, bp.add(1, 1, 1));
-            int lifetime = data.get("lifetime").getAsInt();
 
-            int trpy;
-            if (lifetime >= (500 + 31)) {
-              trpy = (500+31*2)-lifetime;
-            } else {
-              trpy = Math.min(lifetime, 31);
-            }
+            long pingtime = data.get("time").getAsLong();
+            int lifetime = (int) (System.currentTimeMillis() - pingtime);
+
+            int lifefade = lifetime/2;
+            int lifefadeback = 15000/2 - lifefade;
+            int trpy = (lifetime > 15000) ? 0 : min(255, (lifefade > 255) ? lifefadeback : lifefade);
 
             if (dist2d < 6) trpy = trpy/2;
 
-            drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy*4);
-            drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy*2);
+            drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), (int) (trpy/1.5));
+            drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy/6);
 
             float bx = jblock.get(0).getAsFloat() + 0.5F;
             float by = jblock.get(1).getAsFloat() + 0.5F;
@@ -204,7 +202,7 @@ public class RenderPingInWorld {
     tessellator.draw();
   }
 
-  public static void renderPing(int transparency, Integer texture, float bx, float by, float bz, int red, int green, int blue, float pticks, BlockPos bp) {
+  public static void renderPing(int alpha, int texture, float bx, float by, float bz, int red, int green, int blue, float pticks, BlockPos bp) {
     Tessellator tes = Tessellator.getInstance();
     Vec3 player = new Vec3(e.posX - bx, e.posY - by + e.getEyeHeight(), e.posZ - bz);
 
@@ -216,23 +214,23 @@ public class RenderPingInWorld {
 
     GL11.glLineWidth(4);
     wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-    wr.pos(0, bp.getY() + 0.5, 0).color(red, green, blue, transparency*4).endVertex();
-    wr.pos(0, ypos + 1.5, 0).color(red, green, blue, transparency*4).endVertex();
+    wr.pos(0, bp.getY() + 0.5, 0).color(red, green, blue, alpha/2).endVertex();
+    wr.pos(0, ypos + 1.5, 0).color(red, green, blue, alpha/2).endVertex();
     tes.draw();
     double minU = 0.125 * texture;
     double maxU = minU + 0.125;
     GlStateManager.enableTexture2D();
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
     if ((ypos - bp.getY()) >= -1) {
-      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU, 1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-left
-      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU, 0).color(red, green, blue, transparency * 8).endVertex(); //Top-left
-      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU, 0).color(red, green, blue, transparency * 8).endVertex(); //Top-right
-      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU, 1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-right
+      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU, 1).color(red, green, blue, alpha).endVertex(); //Bottom-left
+      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU, 0).color(red, green, blue, alpha).endVertex(); //Top-left
+      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU, 0).color(red, green, blue, alpha).endVertex(); //Top-right
+      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU, 1).color(red, green, blue, alpha).endVertex(); //Bottom-right
     } else {
-      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU, 0).color(red, green, blue, transparency * 8).endVertex(); //Bottom-left
-      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU, 1).color(red, green, blue, transparency * 8).endVertex(); //Top-left
-      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU, 1).color(red, green, blue, transparency * 8).endVertex(); //Top-right
-      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU, 0).color(red, green, blue, transparency * 8).endVertex(); //Bottom-right
+      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU, 0).color(red, green, blue, alpha).endVertex(); //Bottom-left
+      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU, 1).color(red, green, blue, alpha).endVertex(); //Top-left
+      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU, 1).color(red, green, blue, alpha).endVertex(); //Top-right
+      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU, 0).color(red, green, blue, alpha).endVertex(); //Bottom-right
     }
     tes.draw();
     GlStateManager.disableTexture2D();
