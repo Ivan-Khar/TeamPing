@@ -14,10 +14,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 public class ClientThreads {
   private final Socket socket;
@@ -30,8 +32,6 @@ public class ClientThreads {
   private String serverip;
   private boolean debug;
 
-  private final OkHttpClient httpClient = new OkHttpClient();
-  public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
   public ClientThreads(Socket socket, EntityPlayer entity, String sip, Boolean debug) {
     this.socket = socket;
     this.player = entity;
@@ -127,13 +127,12 @@ public class ClientThreads {
               jsonObject.add("selectedProfile", new JsonPrimitive(player.getUniqueID().toString().replace("-", "")));
               jsonObject.add("serverId", new JsonPrimitive(serverid));
               if (!debug) {
+                CloseableHttpClient httpclient = HttpClients.createDefault();
                 String query = jsonObject.toString();
-                RequestBody body = RequestBody.create(query, JSON);
-                Request request = new Request.Builder()
-                  .url("https://sessionserver.mojang.com/session/minecraft/join")
-                  .post(body)
-                  .build();
-                httpClient.newCall(request).execute();
+                StringEntity requestEntity = new StringEntity(query, ContentType.APPLICATION_JSON);
+                HttpPost postMethod = new HttpPost("https://sessionserver.mojang.com/session/minecraft/join");
+                postMethod.setEntity(requestEntity);
+                httpclient.execute(postMethod);
               }
               data.add("serverid", new JsonPrimitive(serverid));
               LOGGER.info(step + " " + data);
