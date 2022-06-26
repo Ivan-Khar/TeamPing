@@ -63,7 +63,7 @@ public class ClientThreads {
               step++;
               lastinteraction = System.currentTimeMillis();
             } else if (step == 5 && text.length() != 0) {
-              if(text.equals("SUCCESS")) {
+              if (text.equals("SUCCESS")) {
                 LOGGER.info(step);
                 step++;
               } else if (text.equals("NOTSUCCESS")) {

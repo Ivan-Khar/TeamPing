@@ -18,8 +18,8 @@ public class MinecraftMixin {
     at = @At(value = "HEAD"),
     cancellable = true
   )
-  private void mixin1(CallbackInfo ci){
-    if(guimenu) ci.cancel();
+  private void mixin1(CallbackInfo ci) {
+    if (guimenu) ci.cancel();
   }
 
   @Inject(
@@ -27,18 +27,18 @@ public class MinecraftMixin {
     at = @At(value = "HEAD"),
     cancellable = true
   )
-  private void mixin2(CallbackInfo ci){
-    if(guimenu) ci.cancel();
+  private void mixin2(CallbackInfo ci) {
+    if (guimenu) ci.cancel();
   }
 
   @Inject(
     method = "shutdownMinecraftApplet()V",
     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/stream/IStream;shutdownStream()V")
   )
-  private void mixin3(CallbackInfo ci){
+  private void mixin3(CallbackInfo ci) {
     stoppingmc = true;
     try {
-      if(socket.isConnected()) socket.close();
+      if (socket.isConnected()) socket.close();
     } catch (IOException e) {
       LOGGER.error("Server exception", e);
     }

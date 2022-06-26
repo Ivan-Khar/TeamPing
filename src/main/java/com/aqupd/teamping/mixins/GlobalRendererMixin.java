@@ -13,7 +13,7 @@ public class GlobalRendererMixin {
     method = "renderWorldPass(IFJ)V",
     at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/GlStateManager;matrixMode(I)V", ordinal = 7)
   )
-  private void mixin(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci){
+  private void mixin(int pass, float partialTicks, long finishTimeNano, CallbackInfo ci) {
     RenderPingInWorld.renderBlock(partialTicks);
   }
 }

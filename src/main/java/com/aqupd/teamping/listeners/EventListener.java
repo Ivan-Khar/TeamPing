@@ -4,6 +4,7 @@ import static com.aqupd.teamping.TeamPing.*;
 import static com.aqupd.teamping.setup.Registrations.keyBindings;
 
 import com.aqupd.teamping.client.ClientThreads;
+import com.aqupd.teamping.client.PingManager;
 import com.aqupd.teamping.client.RenderGUI;
 import com.google.gson.JsonObject;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -22,19 +24,20 @@ public class EventListener {
 	public static float ticks;
 	public static Socket socket;
 	private boolean connectedtoserver = false;
+	private boolean clearpings = false;
 	private final boolean debug = true;
 	public static boolean connecting = false;
 	public static boolean playsound = false;
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void onRenderTickEvent(TickEvent.RenderTickEvent event){
+	public void onRenderTickEvent(TickEvent.RenderTickEvent event) {
 		ticks = event.renderTickTime;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void onPlayerJoinServer(FMLNetworkEvent.ClientConnectedToServerEvent event){
+	public void onPlayerJoinServer(FMLNetworkEvent.ClientConnectedToServerEvent event) {
 		if (!event.isLocal || debug) {
 			if (!connecting) connectedtoserver = true;
 		}
@@ -67,7 +70,7 @@ public class EventListener {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onClientTickEvent(TickEvent.ClientTickEvent event) {
-		if(playsound) {
+		if (playsound) {
 			Minecraft.getMinecraft().thePlayer.playSound("minecraft:fireworks.blast_far", 0.5F, 1F);
 			playsound = !playsound;
 		}
@@ -77,26 +80,38 @@ public class EventListener {
 			JsonObject data = pingsIter.next();
 			int lifetime = data.get("lifetime").getAsInt() - 1;
 			data.addProperty("lifetime", lifetime);
-			if(lifetime <= 0){
+			if (lifetime <= 0) {
 				pingsIter.remove();
 			}
 		}
 
-		if(guimenu && timer < 15) timer++;
-		else if(!guimenu && timer > 0) {
+		if (guimenu && timer < 15) timer++;
+		else if (!guimenu && timer > 0) {
 			timer--;
 			cX = 0;
 			cY = 0;
 		}
 
 		guimenu = keyBindings[0].isKeyDown();
+		if (keyBindings[1].isPressed() || clearpings) {
+			PingManager.clear();
+			clearpings = false;
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onGuiRenderEvent(RenderGameOverlayEvent.Pre event) {
-		if(event.type == RenderGameOverlayEvent.ElementType.BOSSHEALTH && (guimenu || timer > 0)){
+		if (event.type == RenderGameOverlayEvent.ElementType.BOSSHEALTH && (guimenu || timer > 0)) {
 			RenderGUI.render();
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void onWorldChangeEvent(PlayerEvent.PlayerChangedDimensionEvent event) {
+		if (event.player instanceof EntityPlayerSP) {
+			clearpings = true;
 		}
 	}
 }

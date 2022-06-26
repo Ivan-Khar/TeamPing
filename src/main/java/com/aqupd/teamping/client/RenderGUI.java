@@ -83,7 +83,7 @@ public class RenderGUI {
       int a1, a2, a3, a4, a5, a6, a7, a8;
       a1 = a2 = a3 = a4 = a5 = a6 = a7 = a8 = 0;
       double sensitivity = pow(mc.gameSettings.mouseSensitivity / 4 + 0.2, 3) * 8.0F;
-      if(guimenu || menu){
+      if (guimenu || menu) {
         menu = true;
         cX = cX + mc.mouseHelper.deltaX * sensitivity;
         cY = cY - mc.mouseHelper.deltaY * sensitivity;
@@ -95,36 +95,36 @@ public class RenderGUI {
 
         double dist = sqrt(pow(cX, 2) + pow(cY, 2));
         int darkangle = 128;
-        if(dist > 15){
-          if((angle <= 22.5) || (angle > 337.5)){
+        if (dist > 15) {
+          if ((angle <= 22.5) || (angle > 337.5)) {
             a1 = darkangle;
             if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("here");
             if (!guimenu) menu=false;
-          } else if(angle <= 67.5){
+          } else if (angle <= 67.5) {
             a2 = darkangle;
             if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("qhere");
             if (!guimenu) menu=false;
-          } else if(angle <= 112.5){
+          } else if (angle <= 112.5) {
             a3 = darkangle;
             if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("notice");
             if (!guimenu) menu=false;
-          } else if(angle <= 157.5){
+          } else if (angle <= 157.5) {
             a4 = darkangle;
             if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("question");
             if (!guimenu) menu=false;
-          } else if(angle <= 202.5){
+          } else if (angle <= 202.5) {
             a5 = darkangle;
             if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("no");
             if (!guimenu) menu=false;
-          } else if(angle <= 247.5){
+          } else if (angle <= 247.5) {
             a6 = darkangle;
             if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("yes");
             if (!guimenu) menu=false;
-          } else if(angle <= 292.5){
+          } else if (angle <= 292.5) {
             a7 = darkangle;
             if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("defend");
             if (!guimenu) menu=false;
-          } else if(angle <= 337.5){
+          } else if (angle <= 337.5) {
             a8 = darkangle;
             if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("attack");
             if (!guimenu) menu=false;
@@ -141,7 +141,7 @@ public class RenderGUI {
       double mos = (sqrt(pow(16, 2) + pow(16, 2)))/2;
       double midx = cos(PI/4) * (linewidth + 8);
       double midy = sin(PI/4) * (linewidth + 8);
-      if(timer >= 5){
+      if (timer >= 5) {
         int alpha = 6 * (timer-5);
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         wr.pos(linewidth, -8, 0.0D).color(32, 32, 32, alpha + a3).endVertex();         //Right 3

@@ -43,7 +43,7 @@ public class RenderPingInWorld {
       newy = e.posY;
       e = mc.getRenderViewEntity();
       mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings.png"));
-      if(pings.size() != 0) {
+      if (pings.size() != 0) {
         for (JsonObject data: pings) {
           JsonArray jblock = data.get("bp").getAsJsonArray();
           JsonArray jcolor = data.get("color").getAsJsonArray();
@@ -66,13 +66,13 @@ public class RenderPingInWorld {
             int lifetime = data.get("lifetime").getAsInt();
 
             int trpy;
-            if (lifetime >= (500 + 31)){
+            if (lifetime >= (500 + 31)) {
               trpy = (500+31*2)-lifetime;
             } else {
               trpy = Math.min(lifetime, 31);
             }
 
-            if(dist2d < 6) trpy = trpy/2;
+            if (dist2d < 6) trpy = trpy/2;
 
             drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy*4);
             drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy*2);
@@ -82,7 +82,7 @@ public class RenderPingInWorld {
             float bz = jblock.get(2).getAsFloat() + 0.5F;
 
             wr.setTranslation(iPX + bx, iPY, iPZ + bz);
-            switch(type){
+            switch (type) {
               case "here":
                 renderPing(trpy, 0, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
                 break;
@@ -223,7 +223,7 @@ public class RenderPingInWorld {
     double maxU = minU + 0.125;
     GlStateManager.enableTexture2D();
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-    if((ypos - bp.getY()) >= -1) {
+    if ((ypos - bp.getY()) >= -1) {
       wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU, 1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-left
       wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU, 0).color(red, green, blue, transparency * 8).endVertex(); //Top-left
       wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU, 0).color(red, green, blue, transparency * 8).endVertex(); //Top-right

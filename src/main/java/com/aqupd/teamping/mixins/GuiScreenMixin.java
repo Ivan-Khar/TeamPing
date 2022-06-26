@@ -13,8 +13,8 @@ public class GuiScreenMixin {
     method = "updateCameraAndRender(FJ)V",
     constant = @Constant(floatValue = 8.0F, ordinal = 0)
   )
-  private float mixin(float constant){
-    if(guimenu) return 0.0F;
+  private float mixin(float constant) {
+    if (guimenu) return 0.0F;
     else return constant;
   }
 }

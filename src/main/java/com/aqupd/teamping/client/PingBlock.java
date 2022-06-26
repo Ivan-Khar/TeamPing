@@ -12,8 +12,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 
 public class PingBlock {
-  public static void pingBlock(String type){
-    if((System.currentTimeMillis() - lastpingtime) > 1000) {
+  public static void pingBlock(String type) {
+    if ((System.currentTimeMillis() - lastpingtime) > 1000) {
       Minecraft mc = Minecraft.getMinecraft();
       JsonObject data = new JsonObject();
       int distance = min(Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16, 128);
