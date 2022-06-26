@@ -156,6 +156,7 @@ public class ClientThreads {
         } while (!closed);
         closed = true;
         connecting = false;
+        LOGGER.info("Client writer stopped");
       } catch (IOException ex) {
         closed = true;
         connecting = false;

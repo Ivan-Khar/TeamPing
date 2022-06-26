@@ -19,6 +19,7 @@ public class RenderGUI {
   public static void render() {
     Minecraft mc = Minecraft.getMinecraft();
     try {
+      mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings.png"));
       ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
       double width = sr.getScaledWidth_double();
       double height = sr.getScaledHeight_double();
@@ -79,14 +80,8 @@ public class RenderGUI {
       wr.pos(-startx+0.5, -starty, 0.0D).color(64, 64, 64, 127).endVertex();  //Top-Left
       tes.draw();
 
-      int a1 = 0;
-      int a2 = 0;
-      int a3 = 0;
-      int a4 = 0;
-      int a5 = 0;
-      int a6 = 0;
-      int a7 = 0;
-      int a8 = 0;
+      int a1, a2, a3, a4, a5, a6, a7, a8;
+      a1 = a2 = a3 = a4 = a5 = a6 = a7 = a8 = 0;
       double sensitivity = pow(mc.gameSettings.mouseSensitivity / 4 + 0.2, 3) * 8.0F;
       if(guimenu || menu){
         menu = true;
@@ -107,28 +102,31 @@ public class RenderGUI {
             if (!guimenu) menu=false;
           } else if(angle <= 67.5){
             a2 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("danger");
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("qhere");
             if (!guimenu) menu=false;
           } else if(angle <= 112.5){
             a3 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("question");
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("notice");
             if (!guimenu) menu=false;
           } else if(angle <= 157.5){
             a4 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("no");
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("question");
             if (!guimenu) menu=false;
           } else if(angle <= 202.5){
             a5 = darkangle;
-            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("qhere");
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("no");
             if (!guimenu) menu=false;
           } else if(angle <= 247.5){
             a6 = darkangle;
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("yes");
             if (!guimenu) menu=false;
           } else if(angle <= 292.5){
             a7 = darkangle;
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("defend");
             if (!guimenu) menu=false;
           } else if(angle <= 337.5){
             a8 = darkangle;
+            if (mc.gameSettings.keyBindAttack.isKeyDown() || !guimenu) pingBlock("attack");
             if (!guimenu) menu=false;
           }
         } else {
@@ -182,37 +180,80 @@ public class RenderGUI {
         wr.pos(midx, -midy - mos, 0).color(32, 32, 32, alpha + a2).endVertex();        //Top-Right 2
         tes.draw();
 
+        double minU;
+        double maxU;
         GlStateManager.enableTexture2D();
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-        mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings/arrow.png"));
-        wr.pos(-8, -linewidth-16, 0.0D).tex(0, 0).color(0, 201, 151, min(255, alpha * 5)).endVertex();    //Top 1
-        wr.pos(-8, -linewidth, 0.0D).tex(0, 1).color(0, 201, 151, min(255, alpha * 5)).endVertex();        //Top 1
-        wr.pos(8, -linewidth, 0.0D).tex(1, 1).color(0, 201, 151, min(255, alpha * 5)).endVertex();       //Top 1
-        wr.pos(8, -linewidth-16, 0.0D).tex(1, 0).color(0, 201, 151, min(255, alpha * 5)).endVertex();   //Top 1
+
+        minU = 0.125 * 0;
+        maxU = minU + 0.125;
+        wr.pos(-8, -linewidth-16, 0.0D).tex(minU, 0).color(8, 202, 209, min(255, alpha * 5)).endVertex();//Top 1
+        wr.pos(-8, -linewidth, 0.0D).tex(minU, 1).color(8, 202, 209, min(255, alpha * 5)).endVertex();      //Top 1
+        wr.pos(8, -linewidth, 0.0D).tex(maxU, 1).color(8, 202, 209, min(255, alpha * 5)).endVertex();       //Top 1
+        wr.pos(8, -linewidth-16, 0.0D).tex(maxU, 0).color(8, 202, 209, min(255, alpha * 5)).endVertex(); //Top 1
         tes.draw();
 
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-        mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings/exclamation_mark.png"));
-        wr.pos(midx - 8, -midy - 8, 0).tex(0, 0).color(139, 38, 255, min(255, alpha * 5)).endVertex();   //Top-Right 2
-        wr.pos(midx - 8, -midy + 8, 0).tex(0, 1).color(139, 38, 255, min(255, alpha * 5)).endVertex(); //Top-Right 2
-        wr.pos(midx + 8, -midy + 8, 0).tex(1, 1).color(139, 38, 255, min(255, alpha * 5)).endVertex();   //Top-Right 2
-        wr.pos(midx + 8, -midy - 8, 0).tex(1, 0).color(139, 38, 255, min(255, alpha * 5)).endVertex();     //Top-Right 2
+        minU = 0.125 * 1;
+        maxU = minU + 0.125;
+        wr.pos(midx - 8, -midy - 8, 0).tex(minU, 0).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 2
+        wr.pos(midx - 8, -midy + 8, 0).tex(minU, 1).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 2
+        wr.pos(midx + 8, -midy + 8, 0).tex(maxU, 1).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 2
+        wr.pos(midx + 8, -midy - 8, 0).tex(maxU, 0).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 2
         tes.draw();
 
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-        mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings/question_mark.png"));
-        wr.pos(linewidth, -8, 0.0D).tex(0, 0).color(0, 145, 255, min(255, alpha * 5)).endVertex();         //Right 3
-        wr.pos(linewidth, 8, 0.0D).tex(0, 1).color(0, 145, 255, min(255, alpha * 5)).endVertex();            //Right 3
-        wr.pos(linewidth+16, 8, 0.0D).tex(1, 1).color(0, 145, 255, min(255, alpha * 5)).endVertex();    //Right 3
-        wr.pos(linewidth+16, -8, 0.0D).tex(1, 0).color(0, 145, 255, min(255, alpha * 5)).endVertex(); //Right 3
+        minU = 0.125 * 2;
+        maxU = minU + 0.125;
+        wr.pos(linewidth, -8, 0.0D).tex(minU, 0).color(255, 180, 128, min(255, alpha * 5)).endVertex();       //Right 3
+        wr.pos(linewidth, 8, 0.0D).tex(minU, 1).color(255, 180, 128, min(255, alpha * 5)).endVertex();        //Right 3
+        wr.pos(linewidth+16, 8, 0.0D).tex(maxU, 1).color(255, 180, 128, min(255, alpha * 5)).endVertex();  //Right 3
+        wr.pos(linewidth+16, -8, 0.0D).tex(maxU, 0).color(255, 180, 128, min(255, alpha * 5)).endVertex(); //Right 3
         tes.draw();
 
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-        mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings/cross.png"));
-        wr.pos(midx - 8, midy - 8, 0).tex(0, 0).color(217, 46, 48, min(255, alpha * 5)).endVertex(); //Bottom-Right 4
-        wr.pos(midx - 8, midy + 8, 0).tex(0, 1).color(217, 46, 48, min(255, alpha * 5)).endVertex();   //Bottom-Right 4
-        wr.pos(midx + 8, midy + 8, 0).tex(1, 1).color(217, 46, 48, min(255, alpha * 5)).endVertex();     //Bottom-Right 4
-        wr.pos(midx + 8, midy - 8, 0).tex(1, 0).color(217, 46, 48, min(255, alpha * 5)).endVertex();   //Bottom-Right 4
+        minU = 0.125 * 3;
+        maxU = minU + 0.125;
+        wr.pos(midx - 8, midy - 8, 0).tex(minU, 0).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 4
+        wr.pos(midx - 8, midy + 8, 0).tex(minU, 1).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 4
+        wr.pos(midx + 8, midy + 8, 0).tex(maxU, 1).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 4
+        wr.pos(midx + 8, midy - 8, 0).tex(maxU, 0).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 4
+        tes.draw();
+
+        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        minU = 0.125 * 4;
+        maxU = minU + 0.125;
+        wr.pos(-8, linewidth, 0.0D).tex(minU, 0).color(255, 105, 97, min(255, alpha * 5)).endVertex();      //Bottom 5
+        wr.pos(-8, linewidth+16, 0.0D).tex(minU, 1).color(255, 105, 97, min(255, alpha * 5)).endVertex();//Bottom 5
+        wr.pos(8, linewidth+16, 0.0D).tex(maxU, 1).color(255, 105, 97, min(255, alpha * 5)).endVertex(); //Bottom 5
+        wr.pos(8, linewidth, 0.0D).tex(maxU, 0).color(255, 105, 97, min(255, alpha * 5)).endVertex();       //Bottom 5
+        tes.draw();
+
+        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        minU = 0.125 * 5;
+        maxU = minU + 0.125;
+        wr.pos(-midx - 8, midy - 8, 0).tex(minU, 0).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 6
+        wr.pos(-midx - 8, midy + 8, 0).tex(minU, 1).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 6
+        wr.pos(-midx + 8, midy + 8, 0).tex(maxU, 1).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 6
+        wr.pos(-midx + 8, midy - 8, 0).tex(maxU, 0).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 6
+        tes.draw();
+
+        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        minU = 0.125 * 6;
+        maxU = minU + 0.125;
+        wr.pos(-linewidth-16, -8, 0.0D).tex(minU, 0).color(157, 148, 255, min(255, alpha * 5)).endVertex();//Right 7
+        wr.pos(-linewidth-16, 8, 0.0D).tex(minU, 1).color(157, 148, 255, min(255, alpha * 5)).endVertex(); //Right 7
+        wr.pos(-linewidth, 8, 0.0D).tex(maxU, 1).color(157, 148, 255, min(255, alpha * 5)).endVertex();       //Right 7
+        wr.pos(-linewidth, -8, 0.0D).tex(maxU, 0).color(157, 148, 255, min(255, alpha * 5)).endVertex();      //Right 7
+        tes.draw();
+
+        wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        minU = 0.125 * 7;
+        maxU = minU + 0.125;
+        wr.pos(-midx - 8, -midy - 8, 0).tex(minU, 0).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 8
+        wr.pos(-midx - 8, -midy + 8, 0).tex(minU, 1).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 8
+        wr.pos(-midx + 8, -midy + 8, 0).tex(maxU, 1).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 8
+        wr.pos(-midx + 8, -midy - 8, 0).tex(maxU, 0).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 8
         tes.draw();
 
         GlStateManager.disableTexture2D();
@@ -225,6 +266,7 @@ public class RenderGUI {
     } finally {
       WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
       wr.setTranslation(0, 0, 0);
+      GL11.glLineWidth(2);
       GlStateManager.enableTexture2D();
       GlStateManager.disableBlend();
     }

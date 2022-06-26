@@ -2,6 +2,7 @@ package com.aqupd.teamping.client;
 
 import static com.aqupd.teamping.TeamPing.*;
 import static com.aqupd.teamping.listeners.EventListener.*;
+import static java.lang.Math.*;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -15,8 +16,7 @@ public class PingBlock {
     if((System.currentTimeMillis() - lastpingtime) > 1000) {
       Minecraft mc = Minecraft.getMinecraft();
       JsonObject data = new JsonObject();
-      int distance = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
-      if((Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16 > 128)) distance = 128;
+      int distance = min(Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16, 128);
       BlockPos bp = mc.thePlayer.rayTrace(distance, ticks).getBlockPos();
 
       JsonArray blockpos = new JsonArray();

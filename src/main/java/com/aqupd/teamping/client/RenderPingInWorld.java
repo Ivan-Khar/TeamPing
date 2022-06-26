@@ -24,7 +24,7 @@ public class RenderPingInWorld {
   private static final Minecraft mc = Minecraft.getMinecraft();
   private static final Tessellator tes = Tessellator.getInstance();
   private static final WorldRenderer wr = tes.getWorldRenderer();
-  private static final Entity e = mc.getRenderViewEntity();
+  private static Entity e = mc.getRenderViewEntity();
   private static double oldy = 0;
   private static double newy = 0;
 
@@ -41,7 +41,8 @@ public class RenderPingInWorld {
 
       oldy = e.prevPosY;
       newy = e.posY;
-
+      e = mc.getRenderViewEntity();
+      mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings.png"));
       if(pings.size() != 0) {
         for (JsonObject data: pings) {
           JsonArray jblock = data.get("bp").getAsJsonArray();
@@ -83,19 +84,29 @@ public class RenderPingInWorld {
             wr.setTranslation(iPX + bx, iPY, iPZ + bz);
             switch(type){
               case "here":
-                renderPing(trpy, "arrow", bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
-              case "danger":
-                renderPing(trpy, "exclamation_mark", bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
-              case "question":
-                renderPing(trpy, "question_mark", bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
-              case "no":
-                renderPing(trpy, "cross", bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                renderPing(trpy, 0, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
                 break;
               case "qhere":
-                renderPing(trpy, "question_mark", bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                renderPing(trpy, 1, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                break;
+              case "notice":
+                renderPing(trpy, 2, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                break;
+              case "question":
+                renderPing(trpy, 3, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                break;
+              case "no":
+                renderPing(trpy, 4, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                break;
+              case "yes":
+                renderPing(trpy, 5, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                break;
+              case "defend":
+                renderPing(trpy, 6, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                break;
+              case "attack":
+                renderPing(trpy, 7, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                break;
             }
           }
         }
@@ -108,6 +119,7 @@ public class RenderPingInWorld {
     } finally {
       WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
       wr.setTranslation(0, 0, 0);
+      GL11.glLineWidth(1);
       GlStateManager.enableTexture2D();
       GlStateManager.enableDepth();
       GlStateManager.enableAlpha();
@@ -192,7 +204,7 @@ public class RenderPingInWorld {
     tessellator.draw();
   }
 
-  public static void renderPing(int transparency, String textureName, float bx, float by, float bz, int red, int green, int blue, float pticks, BlockPos bp) {
+  public static void renderPing(int transparency, Integer texture, float bx, float by, float bz, int red, int green, int blue, float pticks, BlockPos bp) {
     Tessellator tes = Tessellator.getInstance();
     Vec3 player = new Vec3(e.posX - bx, e.posY - by + e.getEyeHeight(), e.posZ - bz);
 
@@ -204,24 +216,23 @@ public class RenderPingInWorld {
 
     GL11.glLineWidth(4);
     wr.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-    wr.pos(0, bp.getY(), 0).color(red, green, blue, transparency*4).endVertex();
+    wr.pos(0, bp.getY() + 0.5, 0).color(red, green, blue, transparency*4).endVertex();
     wr.pos(0, ypos + 1.5, 0).color(red, green, blue, transparency*4).endVertex();
     tes.draw();
-
+    double minU = 0.125 * texture;
+    double maxU = minU + 0.125;
     GlStateManager.enableTexture2D();
-    mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings/" + textureName + ".png"));
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-
     if((ypos - bp.getY()) >= -1) {
-      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(0, 1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-left
-      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(0, 0).color(red, green, blue, transparency * 8).endVertex(); //Top-left
-      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(1, 0).color(red, green, blue, transparency * 8).endVertex(); //Top-right
-      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(1, 1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-right
+      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU, 1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-left
+      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU, 0).color(red, green, blue, transparency * 8).endVertex(); //Top-left
+      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU, 0).color(red, green, blue, transparency * 8).endVertex(); //Top-right
+      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU, 1).color(red, green, blue, transparency * 8).endVertex(); //Bottom-right
     } else {
-      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(0, 0).color(red, green, blue, transparency * 8).endVertex(); //Bottom-left
-      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(0, 1).color(red, green, blue, transparency * 8).endVertex(); //Top-left
-      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(1, 1).color(red, green, blue, transparency * 8).endVertex(); //Top-right
-      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(1, 0).color(red, green, blue, transparency * 8).endVertex(); //Bottom-right
+      wr.pos(cosyaw, ypos + 0.5, -sinyaw).tex(minU, 0).color(red, green, blue, transparency * 8).endVertex(); //Bottom-left
+      wr.pos(cosyaw, ypos + 2.5, -sinyaw).tex(minU, 1).color(red, green, blue, transparency * 8).endVertex(); //Top-left
+      wr.pos(-cosyaw, ypos + 2.5, sinyaw).tex(maxU, 1).color(red, green, blue, transparency * 8).endVertex(); //Top-right
+      wr.pos(-cosyaw, ypos + 0.5, sinyaw).tex(maxU, 0).color(red, green, blue, transparency * 8).endVertex(); //Bottom-right
     }
     tes.draw();
     GlStateManager.disableTexture2D();
