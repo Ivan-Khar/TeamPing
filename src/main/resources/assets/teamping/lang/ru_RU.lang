@@ -1,4 +1,4 @@
 key.aqupd.categories.teamping=Team Ping
 
-key.aqupd.fkey=FKey
-key.aqupd.lmenukey=LMenuKey
+key.aqupd.menu=Меню пингов
+key.aqupd.reset=Очистить пинги

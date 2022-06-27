@@ -1,7 +1,8 @@
 package com.aqupd.teamping.listeners;
 
 import static com.aqupd.teamping.TeamPing.*;
-import static com.aqupd.teamping.setup.Registrations.keyBindings;
+import static com.aqupd.teamping.setup.Registrations.*;
+import static com.aqupd.teamping.util.Configuration.*;
 
 import com.aqupd.teamping.client.ClientThreads;
 import com.aqupd.teamping.client.PingManager;
@@ -25,7 +26,6 @@ public class EventListener {
 	public static Socket socket;
 	private boolean connectedtoserver = false;
 	private boolean clearpings = false;
-	private final boolean debug = false;
 	public static boolean connecting = false;
 	public static boolean playsound = false;
 

@@ -15,7 +15,6 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderGUI {
   private static boolean menu;
-  private static final String[] pingidnames = new String[]{"here", "qhere", "notice", "question", "no", "yes", "defend", "attack"};
 
   public static void render() {
     Minecraft mc = Minecraft.getMinecraft();
@@ -157,73 +156,73 @@ public class RenderGUI {
 
         minU = 0.125 * 0;
         maxU = minU + 0.125;
-        wr.pos(-8, -linewidth-16, 0.0D).tex(minU, 0).color(8, 202, 209, min(255, alpha * 5)).endVertex();//Top 1
-        wr.pos(-8, -linewidth, 0.0D).tex(minU, 1).color(8, 202, 209, min(255, alpha * 5)).endVertex();      //Top 1
-        wr.pos(8, -linewidth, 0.0D).tex(maxU, 1).color(8, 202, 209, min(255, alpha * 5)).endVertex();       //Top 1
-        wr.pos(8, -linewidth-16, 0.0D).tex(maxU, 0).color(8, 202, 209, min(255, alpha * 5)).endVertex(); //Top 1
+        wr.pos(-8, -linewidth-16, 0.0D).tex(minU, 0).color(8, 202, 209, min(255, alpha * 5)).endVertex();//Top 0
+        wr.pos(-8, -linewidth, 0.0D).tex(minU, 1).color(8, 202, 209, min(255, alpha * 5)).endVertex();      //Top 0
+        wr.pos(8, -linewidth, 0.0D).tex(maxU, 1).color(8, 202, 209, min(255, alpha * 5)).endVertex();       //Top 0
+        wr.pos(8, -linewidth-16, 0.0D).tex(maxU, 0).color(8, 202, 209, min(255, alpha * 5)).endVertex(); //Top 0
         tes.draw();
 
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
         minU = 0.125 * 1;
         maxU = minU + 0.125;
-        wr.pos(midx - 8, -midy - 8, 0).tex(minU, 0).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 2
-        wr.pos(midx - 8, -midy + 8, 0).tex(minU, 1).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 2
-        wr.pos(midx + 8, -midy + 8, 0).tex(maxU, 1).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 2
-        wr.pos(midx + 8, -midy - 8, 0).tex(maxU, 0).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 2
+        wr.pos(midx - 8, -midy - 8, 0).tex(minU, 0).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 1
+        wr.pos(midx - 8, -midy + 8, 0).tex(minU, 1).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 1
+        wr.pos(midx + 8, -midy + 8, 0).tex(maxU, 1).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 1
+        wr.pos(midx + 8, -midy - 8, 0).tex(maxU, 0).color(199, 128, 232, min(255, alpha * 5)).endVertex(); //Top-Right 1
         tes.draw();
 
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
         minU = 0.125 * 2;
         maxU = minU + 0.125;
-        wr.pos(linewidth, -8, 0.0D).tex(minU, 0).color(255, 180, 128, min(255, alpha * 5)).endVertex();       //Right 3
-        wr.pos(linewidth, 8, 0.0D).tex(minU, 1).color(255, 180, 128, min(255, alpha * 5)).endVertex();        //Right 3
-        wr.pos(linewidth+16, 8, 0.0D).tex(maxU, 1).color(255, 180, 128, min(255, alpha * 5)).endVertex();  //Right 3
-        wr.pos(linewidth+16, -8, 0.0D).tex(maxU, 0).color(255, 180, 128, min(255, alpha * 5)).endVertex(); //Right 3
+        wr.pos(linewidth, -8, 0.0D).tex(minU, 0).color(255, 180, 128, min(255, alpha * 5)).endVertex();       //Right 2
+        wr.pos(linewidth, 8, 0.0D).tex(minU, 1).color(255, 180, 128, min(255, alpha * 5)).endVertex();        //Right 2
+        wr.pos(linewidth+16, 8, 0.0D).tex(maxU, 1).color(255, 180, 128, min(255, alpha * 5)).endVertex();  //Right 2
+        wr.pos(linewidth+16, -8, 0.0D).tex(maxU, 0).color(255, 180, 128, min(255, alpha * 5)).endVertex(); //Right 2
         tes.draw();
 
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
         minU = 0.125 * 3;
         maxU = minU + 0.125;
-        wr.pos(midx - 8, midy - 8, 0).tex(minU, 0).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 4
-        wr.pos(midx - 8, midy + 8, 0).tex(minU, 1).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 4
-        wr.pos(midx + 8, midy + 8, 0).tex(maxU, 1).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 4
-        wr.pos(midx + 8, midy - 8, 0).tex(maxU, 0).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 4
+        wr.pos(midx - 8, midy - 8, 0).tex(minU, 0).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 3
+        wr.pos(midx - 8, midy + 8, 0).tex(minU, 1).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 3
+        wr.pos(midx + 8, midy + 8, 0).tex(maxU, 1).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 3
+        wr.pos(midx + 8, midy - 8, 0).tex(maxU, 0).color(89, 173, 246, min(255, alpha * 5)).endVertex(); //Bottom-Right 3
         tes.draw();
 
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
         minU = 0.125 * 4;
         maxU = minU + 0.125;
-        wr.pos(-8, linewidth, 0.0D).tex(minU, 0).color(255, 105, 97, min(255, alpha * 5)).endVertex();      //Bottom 5
-        wr.pos(-8, linewidth+16, 0.0D).tex(minU, 1).color(255, 105, 97, min(255, alpha * 5)).endVertex();//Bottom 5
-        wr.pos(8, linewidth+16, 0.0D).tex(maxU, 1).color(255, 105, 97, min(255, alpha * 5)).endVertex(); //Bottom 5
-        wr.pos(8, linewidth, 0.0D).tex(maxU, 0).color(255, 105, 97, min(255, alpha * 5)).endVertex();       //Bottom 5
+        wr.pos(-8, linewidth, 0.0D).tex(minU, 0).color(255, 105, 97, min(255, alpha * 5)).endVertex();      //Bottom 4
+        wr.pos(-8, linewidth+16, 0.0D).tex(minU, 1).color(255, 105, 97, min(255, alpha * 5)).endVertex();//Bottom 4
+        wr.pos(8, linewidth+16, 0.0D).tex(maxU, 1).color(255, 105, 97, min(255, alpha * 5)).endVertex(); //Bottom 4
+        wr.pos(8, linewidth, 0.0D).tex(maxU, 0).color(255, 105, 97, min(255, alpha * 5)).endVertex();       //Bottom 4
         tes.draw();
 
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
         minU = 0.125 * 5;
         maxU = minU + 0.125;
-        wr.pos(-midx - 8, midy - 8, 0).tex(minU, 0).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 6
-        wr.pos(-midx - 8, midy + 8, 0).tex(minU, 1).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 6
-        wr.pos(-midx + 8, midy + 8, 0).tex(maxU, 1).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 6
-        wr.pos(-midx + 8, midy - 8, 0).tex(maxU, 0).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 6
+        wr.pos(-midx - 8, midy - 8, 0).tex(minU, 0).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 5
+        wr.pos(-midx - 8, midy + 8, 0).tex(minU, 1).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 5
+        wr.pos(-midx + 8, midy + 8, 0).tex(maxU, 1).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 5
+        wr.pos(-midx + 8, midy - 8, 0).tex(maxU, 0).color(66, 214, 164, min(255, alpha * 5)).endVertex(); //Bottom-Left 5
         tes.draw();
 
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
         minU = 0.125 * 6;
         maxU = minU + 0.125;
-        wr.pos(-linewidth-16, -8, 0.0D).tex(minU, 0).color(157, 148, 255, min(255, alpha * 5)).endVertex();//Right 7
-        wr.pos(-linewidth-16, 8, 0.0D).tex(minU, 1).color(157, 148, 255, min(255, alpha * 5)).endVertex(); //Right 7
-        wr.pos(-linewidth, 8, 0.0D).tex(maxU, 1).color(157, 148, 255, min(255, alpha * 5)).endVertex();       //Right 7
-        wr.pos(-linewidth, -8, 0.0D).tex(maxU, 0).color(157, 148, 255, min(255, alpha * 5)).endVertex();      //Right 7
+        wr.pos(-linewidth-16, -8, 0.0D).tex(minU, 0).color(157, 148, 255, min(255, alpha * 5)).endVertex();//Right 6
+        wr.pos(-linewidth-16, 8, 0.0D).tex(minU, 1).color(157, 148, 255, min(255, alpha * 5)).endVertex(); //Right 6
+        wr.pos(-linewidth, 8, 0.0D).tex(maxU, 1).color(157, 148, 255, min(255, alpha * 5)).endVertex();       //Right 6
+        wr.pos(-linewidth, -8, 0.0D).tex(maxU, 0).color(157, 148, 255, min(255, alpha * 5)).endVertex();      //Right 6
         tes.draw();
 
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
         minU = 0.125 * 7;
         maxU = minU + 0.125;
-        wr.pos(-midx - 8, -midy - 8, 0).tex(minU, 0).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 8
-        wr.pos(-midx - 8, -midy + 8, 0).tex(minU, 1).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 8
-        wr.pos(-midx + 8, -midy + 8, 0).tex(maxU, 1).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 8
-        wr.pos(-midx + 8, -midy - 8, 0).tex(maxU, 0).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 8
+        wr.pos(-midx - 8, -midy - 8, 0).tex(minU, 0).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 7
+        wr.pos(-midx - 8, -midy + 8, 0).tex(minU, 1).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 7
+        wr.pos(-midx + 8, -midy + 8, 0).tex(maxU, 1).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 7
+        wr.pos(-midx + 8, -midy - 8, 0).tex(maxU, 0).color(248, 243, 141, min(255, alpha * 5)).endVertex(); //Top-Left 7
         tes.draw();
 
         GlStateManager.disableTexture2D();

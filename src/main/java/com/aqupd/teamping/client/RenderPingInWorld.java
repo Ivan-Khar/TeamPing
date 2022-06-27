@@ -8,6 +8,7 @@ import static net.minecraft.client.particle.EntityFX.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.awt.*;
+import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -84,25 +85,25 @@ public class RenderPingInWorld {
               case "here":
                 renderPing(trpy, 0, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
                 break;
-              case "qhere":
+              case "notice":
                 renderPing(trpy, 1, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
                 break;
-              case "notice":
+              case "question":
                 renderPing(trpy, 2, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
                 break;
-              case "question":
+              case "no":
                 renderPing(trpy, 3, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
                 break;
-              case "no":
+              case "yes":
                 renderPing(trpy, 4, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
                 break;
-              case "yes":
+              case "defend":
                 renderPing(trpy, 5, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
                 break;
-              case "defend":
+              case "attack":
                 renderPing(trpy, 6, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
                 break;
-              case "attack":
+              case "mine":
                 renderPing(trpy, 7, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
                 break;
             }

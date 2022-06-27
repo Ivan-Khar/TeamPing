@@ -8,26 +8,9 @@ import java.nio.file.Paths;
 
 public class Configuration {
 
-	public static boolean Setting1 = false;
-	public static boolean Setting2 = false;
-	public static boolean Setting3 = false;
+	public static boolean debug = false;
 
 	private static final File configFile = new File("./config/AqMods/TeamPing.properties");
-
-	public static void change1() {
-		Setting1 = !Setting1;
-		saveOptions();
-	}
-
-	public static void change2() {
-		Setting2 = !Setting2;
-		saveOptions();
-	}
-
-	public static void change3() {
-		Setting3 = !Setting3;
-		saveOptions();
-	}
 
 	public static void loadOptions() throws IOException {
 		if (!configFile.exists() || configFile.length() == 0) saveOptions();
@@ -38,9 +21,7 @@ public class Configuration {
 		while ((s = bufferedreader.readLine()) != null) {
 			String[] astring = s.split(":");
 
-			if (astring[0].equals("setting1")) Setting1 = Boolean.parseBoolean(astring[1]);
-			if (astring[0].equals("setting2")) Setting2 = Boolean.parseBoolean(astring[1]);
-			if (astring[0].equals("setting3")) Setting3 = Boolean.parseBoolean(astring[1]);
+			if (astring[0].equals("debug")) debug = Boolean.parseBoolean(astring[1]);
 		}
 	}
 
@@ -51,9 +32,7 @@ public class Configuration {
 			if (!configFile.exists()) configFile.createNewFile();
 			if (configFile.exists()) {
 				PrintWriter printwriter = new PrintWriter(new FileWriter(configFile));
-				printwriter.println("setting1:" + Setting1);
-				printwriter.println("setting2:" + Setting2);
-				printwriter.println("setting3:" + Setting3);
+				printwriter.println("debug:" + debug);
 				printwriter.close();
 			}
 		} catch (Exception exception) {
