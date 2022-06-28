@@ -79,7 +79,20 @@ public class ClientThreads {
             jo.add("time", new JsonPrimitive(System.currentTimeMillis()));
             LOGGER.info("received ping " + jo);
             pings.add(jo);
-            playsound=true;
+
+            Integer[] playerpos = new Integer[3];
+            playerpos[0] = Minecraft.getMinecraft().thePlayer.getPosition().getX();
+            playerpos[1] = Minecraft.getMinecraft().thePlayer.getPosition().getY();
+            playerpos[2] = Minecraft.getMinecraft().thePlayer.getPosition().getZ();
+
+            Integer[] blockps = new Integer[3];
+            blockps[0] = Math.min(2, Math.max(-2, playerpos[0] - jo.get("bp").getAsJsonArray().get(0).getAsInt()));
+            blockps[1] = Math.min(2, Math.max(-2, playerpos[1] - jo.get("bp").getAsJsonArray().get(1).getAsInt()));
+            blockps[2] = Math.min(2, Math.max(-2, playerpos[2] - jo.get("bp").getAsJsonArray().get(2).getAsInt()));
+
+            playsound[0] = playerpos[0] - blockps[0];
+            playsound[1] = playerpos[1] - blockps[1];
+            playsound[2] = playerpos[2] - blockps[2];
           }
         } while (!closed);
         closed = true;

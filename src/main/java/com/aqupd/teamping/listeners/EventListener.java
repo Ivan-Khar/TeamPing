@@ -1,8 +1,8 @@
 package com.aqupd.teamping.listeners;
 
 import static com.aqupd.teamping.TeamPing.*;
-import static com.aqupd.teamping.setup.Registrations.*;
-import static com.aqupd.teamping.util.Configuration.*;
+import static com.aqupd.teamping.setup.Registrations.keyBindings;
+import static com.aqupd.teamping.util.Configuration.debug;
 
 import com.aqupd.teamping.client.ClientThreads;
 import com.aqupd.teamping.client.PingManager;
@@ -27,7 +27,7 @@ public class EventListener {
 	private boolean connectedtoserver = false;
 	private boolean clearpings = false;
 	public static boolean connecting = false;
-	public static boolean playsound = false;
+	public static Integer[] playsound = new Integer[3];
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -80,9 +80,11 @@ public class EventListener {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onClientTickEvent(TickEvent.ClientTickEvent event) {
-		if (playsound) {
-			Minecraft.getMinecraft().thePlayer.playSound("minecraft:fireworks.blast_far", 0.5F, 1F);
-			playsound = !playsound;
+		if (playsound[0] != null && playsound[1] != null && playsound[2] != null) {
+			Minecraft.getMinecraft().theWorld.playSound(playsound[0], playsound[1], playsound[2],"minecraft:fireworks.blast_far", 0.5F, 1F, false);
+			playsound[0] = null;
+			playsound[1] = null;
+			playsound[2] = null;
 		}
 
 		Iterator<JsonObject> pingsIter = pings.iterator();

@@ -8,7 +8,6 @@ import static net.minecraft.client.particle.EntityFX.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.awt.*;
-import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
