@@ -18,6 +18,9 @@ public class RenderGUI {
 
   public static void render() {
     Minecraft mc = Minecraft.getMinecraft();
+    Tessellator tes = Tessellator.getInstance();
+    WorldRenderer wr = tes.getWorldRenderer();
+
     try {
       mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings.png"));
       ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
@@ -25,8 +28,6 @@ public class RenderGUI {
       double height = sr.getScaledHeight_double();
       double linestart = 10;
       double linewidth = linestart + Math.min(timer, 4)*4;
-      Tessellator tes = Tessellator.getInstance();
-      WorldRenderer wr = tes.getWorldRenderer();
       GlStateManager.enableBlend();
       GlStateManager.disableTexture2D();
       GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -228,12 +229,10 @@ public class RenderGUI {
         GlStateManager.disableTexture2D();
       }
     } catch(Exception e) {
-      WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
       try {
         wr.finishDrawing();
       } catch (IllegalStateException ignored) {}
     } finally {
-      WorldRenderer wr = Tessellator.getInstance().getWorldRenderer();
       wr.setTranslation(0, 0, 0);
       GL11.glLineWidth(2);
       GlStateManager.enableTexture2D();

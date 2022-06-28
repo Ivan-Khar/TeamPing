@@ -7,6 +7,7 @@ import static com.aqupd.teamping.util.Configuration.debug;
 import com.aqupd.teamping.client.ClientThreads;
 import com.aqupd.teamping.client.PingManager;
 import com.aqupd.teamping.client.RenderGUI;
+import com.aqupd.teamping.client.TeamPingGUI;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.net.Socket;
@@ -108,6 +109,8 @@ public class EventListener {
 			PingManager.clear();
 			clearpings = false;
 		}
+
+		if (keyBindings[2].isPressed()) Minecraft.getMinecraft().displayGuiScreen(new TeamPingGUI());
 	}
 
 	@SideOnly(Side.CLIENT)
