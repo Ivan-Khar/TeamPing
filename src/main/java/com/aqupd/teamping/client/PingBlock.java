@@ -24,6 +24,7 @@ public class PingBlock {
       blockpos.add(new JsonPrimitive(bp.getY()));
       blockpos.add(new JsonPrimitive(bp.getZ()));
 
+      data.add("datatype", new JsonPrimitive("ping"));
       data.add("bp", blockpos);
       data.add("type", new JsonPrimitive(type));
       data.add("uuid", new JsonPrimitive(UUID.randomUUID().toString()));
