@@ -45,8 +45,6 @@ repositories {
 }
 
 dependencies {
-    include "test:betterfps"
-    include "test:foamfix"
     include("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
         exclude module: "guava"
         exclude module: "commons-io"

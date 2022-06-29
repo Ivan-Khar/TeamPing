@@ -26,6 +26,8 @@ public class TeamPing {
 	public static final String[] pingidnames = new String[]{"here", "notice", "question", "no", "yes", "defend", "attack", "mine"};
 	public static List<JsonObject> pings = new ArrayList<>();
 	public static JsonObject ping;
+	public static String partyName = "Your party id";
+	public static boolean hidetext = false;
 	public static boolean guimenu = false;
 	public static boolean stoppingmc = false;
 	public static int timer = 0;

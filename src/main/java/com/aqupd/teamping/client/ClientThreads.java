@@ -1,20 +1,17 @@
 package com.aqupd.teamping.client;
 
 import static com.aqupd.teamping.TeamPing.*;
-import static com.aqupd.teamping.listeners.EventListener.*;
+import static com.aqupd.teamping.listeners.EventListener.connecting;
+import static com.aqupd.teamping.listeners.EventListener.playsound;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import java.io.*;
-import java.math.BigInteger;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -24,18 +21,15 @@ import org.apache.http.impl.client.HttpClients;
 public class ClientThreads {
   private final Socket socket;
   private final EntityPlayer player;
+  private final boolean debug;
   private String reason;
   private int step = 0;
-  private long lastinteraction = 0;
   private boolean init = true;
   private boolean closed = false;
-  private String serverip;
-  private boolean debug;
 
-  public ClientThreads(Socket socket, EntityPlayer entity, String sip, Boolean debug) {
+  public ClientThreads(Socket socket, EntityPlayer entity, Boolean debug) {
     this.socket = socket;
     this.player = entity;
-    this.serverip = sip;
     this.debug = debug;
     new Reader().start();
     new Writer().start();
@@ -48,31 +42,22 @@ public class ClientThreads {
         InputStream input = socket.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         String text;
-        lastinteraction = System.currentTimeMillis();
 
         do {
           text = reader.readLine();
           if (text == null) break;
           if (init) {
-            if (step == 1 && text.equals("YES")) {
-              LOGGER.info(step);
-              step++;
-              lastinteraction = System.currentTimeMillis();
-            } else if (step == 3 && text.equals("YES")) {
-              LOGGER.info(step);
-              step++;
-              lastinteraction = System.currentTimeMillis();
-            } else if (step == 5 && text.length() != 0) {
+            if (step == 1 && text.length() != 0) {
+              init = false;
               if (text.equals("SUCCESS")) {
                 LOGGER.info(step);
                 step++;
               } else if (text.equals("NOTSUCCESS")) {
                 LOGGER.info(step);
                 conattempts = 3;
-                reason = "Server couldn't verify you";
+                reason = "Server couldn't verify you. Restart your game in order to connect";
                 break;
               }
-              lastinteraction = System.currentTimeMillis();
             }
           } else {
             JsonObject jo = new JsonParser().parse(text).getAsJsonObject();
@@ -122,21 +107,12 @@ public class ClientThreads {
           if (socket.isClosed()) break;
           if (ping != null) ping1 = ping;
           if (init) {
-            if (step == 0 && (System.currentTimeMillis() - lastinteraction) > 250) {
-              LOGGER.info(step);
-              writer.println("CONNECT");
-              step++;
-            } else if (step == 2 && (System.currentTimeMillis() - lastinteraction) > 250) {
-              LOGGER.info(step);
-              writer.println("DATA");
-              step++;
-            } else if (step == 4 && (System.currentTimeMillis() - lastinteraction) > 250) {
+            if (step == 0) {
               data.add("name", new JsonPrimitive(player.getName()));
-              String token = Minecraft.getMinecraft().getSession().getToken();
-              String serverid = (debug ? "localhost" : hash(serverip));
+              String serverid = (UUID.randomUUID().toString());
 
               JsonObject jsonObject = new JsonObject();
-              jsonObject.add("accessToken", new JsonPrimitive(token));
+              jsonObject.add("accessToken", new JsonPrimitive(Minecraft.getMinecraft().getSession().getToken()));
               jsonObject.add("selectedProfile", new JsonPrimitive(player.getUniqueID().toString().replace("-", "")));
               jsonObject.add("serverId", new JsonPrimitive(serverid));
               if (!debug) {
@@ -151,10 +127,6 @@ public class ClientThreads {
               LOGGER.info(step + " " + data);
               writer.println(data);
               step++;
-            } else if (step == 6 && (System.currentTimeMillis() - lastinteraction) > 250) {
-              LOGGER.info(step);
-              writer.println("YES");
-              init = false;
             }
           } else if ((System.currentTimeMillis() - pingtime) > 1000) {
             writer.println("PING");
@@ -174,20 +146,5 @@ public class ClientThreads {
         LOGGER.error("Client writer exception", ex);
       }
     }
-  }
-
-  public static String hash(String str) {
-    try {
-      byte[] digest = digest(str);
-      return new BigInteger(digest).toString(16);
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private static byte[] digest(String str) throws NoSuchAlgorithmException {
-    MessageDigest md = MessageDigest.getInstance("SHA-1");
-    byte[] strBytes = str.getBytes(StandardCharsets.UTF_8);
-    return md.digest(strBytes);
   }
 }

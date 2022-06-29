@@ -64,9 +64,8 @@ public class EventListener {
 				if (!connecting && !stoppingmc) {
 					connecting = true;
 					try {
-						String serverip = (debug ? "localhost" : Minecraft.getMinecraft().getCurrentServerData().serverIP);
 						socket = new Socket(debug ? "localhost" : "vps.theaq.one", 28754);
-						new ClientThreads(socket, event.player, serverip, debug);
+						new ClientThreads(socket, event.player, debug);
 					} catch (IOException ex) {
 						connecting = false;
 						LOGGER.error("Server error", ex);

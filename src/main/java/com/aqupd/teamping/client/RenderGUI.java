@@ -104,7 +104,7 @@ public class RenderGUI {
         }
         wr.begin(GL11.GL_POINTS, DefaultVertexFormats.POSITION_COLOR);
         GL11.glPointSize(4);
-        wr.pos(cX, cY, 0).color(25, 25, 25, 33).endVertex();
+        wr.pos(cX, cY, 0).color(25, 25, 25, 127).endVertex();
         tes.draw();
       }
 

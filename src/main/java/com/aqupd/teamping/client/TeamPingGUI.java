@@ -1,25 +1,28 @@
 package com.aqupd.teamping.client;
 
-import static com.aqupd.teamping.TeamPing.MOD_ID;
+import static com.aqupd.teamping.TeamPing.*;
 
+import com.aqupd.teamping.util.GuiTextFieldHiddenText;
 import java.io.IOException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.config.GuiCheckBox;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class TeamPingGUI extends GuiScreen {
-  private GuiTextField partyNameField;
-  private GuiButton buttons;
+  private GuiTextFieldHiddenText partyNameField;
+  private GuiButton joinButton;
+  private GuiCheckBox checkmark;
   private int rwidth, rheight, menuX, menuY, posX, posY;
-  private String partyName = "Your party name";
 
+  @Override
   public void updateScreen() {
     partyNameField.updateCursorCounter();
+    partyNameField.setHideText(hidetext);
+    hidetext = checkmark.isChecked();
   }
 
   @Override
@@ -32,42 +35,28 @@ public class TeamPingGUI extends GuiScreen {
     posX = (rwidth - menuX) / 2;
     posY = (rheight - menuY) / 2;
 
-    partyNameField = new GuiTextField(1, fontRendererObj, posX + 8, posY + 24, menuX - 16, 20);
+    partyNameField = new GuiTextFieldHiddenText(1, fontRendererObj, posX + 8, posY + 24, menuX - 16, 20);
     partyNameField.setEnableBackgroundDrawing(true);
     partyNameField.setMaxStringLength(32);
-    partyNameField.setText(this.partyName);
-
-    buttonList.add(buttons = new GuiButton(0, rwidth/2 - 98/2, posY + 46, 98, 20, "Join/Create"));
+    partyNameField.setText(partyName);
+    partyNameField.setHideText(hidetext);
+    buttonList.add(joinButton = new GuiButton(0, posX + 8, posY + 46, 98, 20, "Join/Create"));
+    buttonList.add(checkmark = new GuiCheckBox(1, rwidth/2 + 28, posY + 50, "", hidetext));
     super.initGui();
   }
 
   @Override
   public void drawScreen(int mouseX, int mouseY, float partialTicks) {
     drawDefaultBackground();
-    Tessellator tes = Tessellator.getInstance();
-    WorldRenderer wr = tes.getWorldRenderer();
 
     Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pingsmenugui.png"));
     drawTexturedModalRect(posX, posY, 0, 0, menuX, menuY);
 
     String text = "Pings party";
+    fontRendererObj.drawString("hide id", rwidth/2 + 42, posY + 52, 3158064);
     fontRendererObj.drawString(text, (rwidth/2 - fontRendererObj.getStringWidth(text) / 2), posY+8, 3158064);
     partyNameField.drawTextBox();
-    /*
-    GlStateManager.enableBlend();
-    GlStateManager.disableTexture2D();
-    wr.setTranslation(width/2, height/2, 0);
-    wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-    wr.pos(0, 0, 0).color(255, 0, 0, 127).endVertex();
-    wr.pos(0, 150, 0).color(255, 0, 0, 127).endVertex();
-    wr.pos(150, 150, 0).color(255, 0, 0, 127).endVertex();
-    wr.pos(150, 0, 0).color(255, 0, 0, 127).endVertex();
-    tes.draw();
-
-    wr.setTranslation(0, 0, 0);
-    GlStateManager.enableTexture2D();
-    GlStateManager.disableBlend();
-    */
+    joinButton.enabled = !partyName.equals("Your party id") && partyName.length() >= 3;
     super.drawScreen(mouseX, mouseY, partialTicks);
   }
 
