@@ -27,7 +27,7 @@ public class TeamPing {
 	public static String partyName = "Your party id";
 	public static boolean hidetext = false;
 	public static boolean isInParty = false;
-
+	public static ArrayList<String> partyPlayers = new ArrayList<>();
 	private final EventListener eventListener;
 
 	public TeamPing() throws IOException {
