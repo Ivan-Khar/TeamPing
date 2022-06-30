@@ -48,6 +48,7 @@ public class RenderPingInWorld {
           JsonArray jblock = data.get("bp").getAsJsonArray();
           JsonArray jcolor = data.get("color").getAsJsonArray();
           String type = data.get("type").getAsString();
+          boolean isEntity = data.get("isEntity").getAsBoolean();
 
           Color color = new Color(jcolor.get(0).getAsInt(), jcolor.get(1).getAsInt(), jcolor.get(2).getAsInt());
           BlockPos bp = new BlockPos(jblock.get(0).getAsInt(), jblock.get(1).getAsInt(), jblock.get(2).getAsInt());
@@ -72,8 +73,8 @@ public class RenderPingInWorld {
 
             if (dist2d < 6) trpy = trpy/2;
 
-            drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), (int) (trpy/1.5));
-            drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy/6);
+            drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), (int) (trpy/1.5), isEntity);
+            drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy/6, isEntity);
 
             float bx = jblock.get(0).getAsFloat() + 0.5F;
             float by = jblock.get(1).getAsFloat() + 0.5F;
@@ -126,9 +127,13 @@ public class RenderPingInWorld {
     }
   }
 
-  public static void drawOutline(AxisAlignedBB boundingBox,int red, int green, int blue, int alpha) {
+  public static void drawOutline(AxisAlignedBB boundingBox, int red, int green, int blue, int alpha, boolean isEntity) {
     Tessellator tessellator = Tessellator.getInstance();
     WorldRenderer wr = tessellator.getWorldRenderer();
+    if (isEntity) {
+      boundingBox = boundingBox.expand(0, 0.5, 0);
+      boundingBox = boundingBox.offset(0, 0.5, 0);
+    }
     wr.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
     wr.pos(boundingBox.minX, boundingBox.minY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
     wr.pos(boundingBox.maxX, boundingBox.minY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();
@@ -155,9 +160,15 @@ public class RenderPingInWorld {
     tessellator.draw();
   }
 
-  public static void drawBox(AxisAlignedBB boundingBox,int red, int green, int blue, int alpha) {
+  public static void drawBox(AxisAlignedBB boundingBox,int red, int green, int blue, int alpha, boolean isEntity) {
     Tessellator tessellator = Tessellator.getInstance();
     WorldRenderer wr = tessellator.getWorldRenderer();
+
+    if (isEntity) {
+      boundingBox = boundingBox.expand(0, 0.5, 0);
+      boundingBox = boundingBox.offset(0, 0.5, 0);
+    }
+
     //down
     wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
     wr.pos(boundingBox.minX, boundingBox.minY, boundingBox.minZ).color(red, green, blue, alpha).endVertex();

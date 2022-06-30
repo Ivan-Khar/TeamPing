@@ -1,7 +1,7 @@
 package com.aqupd.teamping.mixins;
 
 import static com.aqupd.teamping.TeamPing.*;
-import static com.aqupd.teamping.listeners.EventListener.socket;
+import static com.aqupd.teamping.listeners.EventListener.*;
 
 import java.io.IOException;
 import net.minecraft.client.Minecraft;

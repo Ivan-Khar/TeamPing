@@ -1,7 +1,8 @@
 package com.aqupd.teamping.client;
 
 import static com.aqupd.teamping.TeamPing.*;
-import static com.aqupd.teamping.client.PingBlock.*;
+import static com.aqupd.teamping.client.SendData.*;
+import static com.aqupd.teamping.listeners.EventListener.*;
 import static java.lang.Math.*;
 
 import net.minecraft.client.Minecraft;
@@ -15,6 +16,8 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderGUI {
   private static boolean menu;
+  public static double cX = 0;
+  public static double cY = 0;
 
   public static void render() {
     Minecraft mc = Minecraft.getMinecraft();

@@ -3,8 +3,6 @@ package com.aqupd.teamping;
 import com.aqupd.teamping.listeners.EventListener;
 import com.aqupd.teamping.setup.Registrations;
 import com.aqupd.teamping.util.Configuration;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,17 +23,11 @@ public class TeamPing {
 	public static final Logger LOGGER = LogManager.getLogger("AqUpd's " + MOD_NAME);
 	public static final String[] pingidnames = new String[]{"here", "notice", "question", "no", "yes", "defend", "attack", "mine"};
 	public static List<JsonObject> pings = new ArrayList<>();
-	public static JsonObject ping;
+	public static JsonObject datatosend;
 	public static String partyName = "Your party id";
 	public static boolean hidetext = false;
-	public static boolean guimenu = false;
-	public static boolean stoppingmc = false;
-	public static int timer = 0;
-	public static int conattempts = 0;
-	public static long lastpingtime = 0;
-	public static long time;
-	public static double cX = 0;
-	public static double cY = 0;
+	public static boolean isInParty = false;
+
 	private final EventListener eventListener;
 
 	public TeamPing() throws IOException {

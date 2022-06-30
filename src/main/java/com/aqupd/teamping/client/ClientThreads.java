@@ -1,8 +1,8 @@
 package com.aqupd.teamping.client;
 
 import static com.aqupd.teamping.TeamPing.*;
-import static com.aqupd.teamping.listeners.EventListener.connecting;
-import static com.aqupd.teamping.listeners.EventListener.playsound;
+import static com.aqupd.teamping.listeners.EventListener.*;
+import static com.aqupd.teamping.util.UtilMethods.isValidJsonObject;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -59,7 +59,7 @@ public class ClientThreads {
                 break;
               }
             }
-          } else {
+          } else if (isValidJsonObject(text)) {
             JsonObject jo = new JsonParser().parse(text).getAsJsonObject();
             jo.add("time", new JsonPrimitive(System.currentTimeMillis()));
             LOGGER.info("received ping " + jo);
@@ -82,14 +82,12 @@ public class ClientThreads {
         } while (!closed);
         closed = true;
         connecting = false;
-        time = System.currentTimeMillis();
         socket.close();
         LOGGER.info("DISCONNECTED" + (reason.length() == 0 ? "" : " with reason: " + reason));
       } catch (IOException ex) {
         LOGGER.error("Client reader exception", ex);
         closed = true;
         connecting = false;
-        time = System.currentTimeMillis();
       }
     }
   }
@@ -103,9 +101,9 @@ public class ClientThreads {
         long pingtime = System.currentTimeMillis();
 
         do {
-          JsonObject ping1 = new JsonObject();
+          JsonObject data1 = new JsonObject();
           if (socket.isClosed()) break;
-          if (ping != null) ping1 = ping;
+          if (datatosend != null) data1 = datatosend;
           if (init) {
             if (step == 0) {
               data.add("name", new JsonPrimitive(player.getName()));
@@ -131,10 +129,10 @@ public class ClientThreads {
           } else if ((System.currentTimeMillis() - pingtime) > 1000) {
             writer.println("PING");
             pingtime = System.currentTimeMillis();
-          } else if (!ping1.equals(new JsonObject())) {
-            LOGGER.info("send ping " + ping1);
-            writer.println(ping1);
-            ping = new JsonObject();
+          } else if (!data1.equals(new JsonObject())) {
+            LOGGER.info("send data " + data1);
+            writer.println(data1);
+            datatosend = new JsonObject();
           }
         } while (!closed);
         closed = true;

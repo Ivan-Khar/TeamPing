@@ -1,6 +1,6 @@
 package com.aqupd.teamping.mixins;
 
-import static com.aqupd.teamping.TeamPing.guimenu;
+import static com.aqupd.teamping.listeners.EventListener.guimenu;
 
 import net.minecraft.client.renderer.EntityRenderer;
 import org.spongepowered.asm.mixin.Mixin;

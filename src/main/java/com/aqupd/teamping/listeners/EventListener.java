@@ -1,13 +1,14 @@
 package com.aqupd.teamping.listeners;
 
 import static com.aqupd.teamping.TeamPing.*;
+import static com.aqupd.teamping.client.RenderGUI.*;
 import static com.aqupd.teamping.setup.Registrations.keyBindings;
 import static com.aqupd.teamping.util.Configuration.debug;
 
 import com.aqupd.teamping.client.ClientThreads;
 import com.aqupd.teamping.client.PingManager;
 import com.aqupd.teamping.client.RenderGUI;
-import com.aqupd.teamping.client.TeamPingGUI;
+import com.aqupd.teamping.client.PartyGUI;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.net.Socket;
@@ -23,12 +24,17 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EventListener {
-	public static float ticks;
-	public static Socket socket;
 	private boolean connectedtoserver = false;
 	private boolean clearpings = false;
+
+	public static Socket socket;
 	public static boolean connecting = false;
+	public static boolean guimenu = false;
+	public static boolean stoppingmc = false;
+	public static float ticks;
 	public static Integer[] playsound = new Integer[3];
+	public static int conattempts = 0;
+	public static int timer = 0;
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -58,7 +64,6 @@ public class EventListener {
 	@SubscribeEvent
 	public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
 		if (event.player instanceof EntityPlayerSP) {
-			if (time == 0) time = System.currentTimeMillis();
 			if (connectedtoserver) {
 				connectedtoserver = false;
 				if (!connecting && !stoppingmc) {
@@ -70,7 +75,6 @@ public class EventListener {
 						connecting = false;
 						LOGGER.error("Server error", ex);
 					}
-					time = System.currentTimeMillis();
 					conattempts++;
 				}
 			}
@@ -109,7 +113,7 @@ public class EventListener {
 			clearpings = false;
 		}
 
-		if (keyBindings[2].isPressed()) Minecraft.getMinecraft().displayGuiScreen(new TeamPingGUI());
+		if (keyBindings[2].isPressed()) Minecraft.getMinecraft().displayGuiScreen(new PartyGUI());
 	}
 
 	@SideOnly(Side.CLIENT)
