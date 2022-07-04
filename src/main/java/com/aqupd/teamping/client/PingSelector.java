@@ -14,11 +14,11 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-public class RenderGUI {
+public class PingSelector {
   private static boolean menu;
   public static double cX = 0;
   public static double cY = 0;
-
+  private static int currentid = -1;
   public static void render() {
     Minecraft mc = Minecraft.getMinecraft();
     Tessellator tes = Tessellator.getInstance();
@@ -109,6 +109,11 @@ public class RenderGUI {
         GL11.glPointSize(4);
         wr.pos(cX, cY, 0).color(25, 25, 25, 127).endVertex();
         tes.draw();
+      }
+
+      if (currentid != pingid) {
+        currentid = pingid;
+        Minecraft.getMinecraft().thePlayer.playSound("minecraft:random.wood_click", 0.1F, 2);
       }
 
       double mos = (sqrt(pow(16, 2) + pow(16, 2)))/2;

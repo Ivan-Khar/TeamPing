@@ -57,6 +57,37 @@ public class SendData {
     datatosend = data;
   }
 
+  public static void leaveParty() {
+    JsonObject data = new JsonObject();
+    data.add("datatype", new JsonPrimitive("party"));
+    data.add("subtype", new JsonPrimitive("disconnect"));
+    datatosend = data;
+  }
+
+  public static void kickFromParty(String name) {
+    JsonObject data = new JsonObject();
+    data.add("datatype", new JsonPrimitive("party"));
+    data.add("subtype", new JsonPrimitive("kick"));
+    data.add("kick", new JsonPrimitive(name));
+    datatosend = data;
+  }
+
+  public static void banFromParty(String name) {
+    JsonObject data = new JsonObject();
+    data.add("datatype", new JsonPrimitive("party"));
+    data.add("subtype", new JsonPrimitive("ban"));
+    data.add("kick", new JsonPrimitive(name));
+    datatosend = data;
+  }
+
+  public static void promotePartyMember(String name) {
+    JsonObject data = new JsonObject();
+    data.add("datatype", new JsonPrimitive("party"));
+    data.add("subtype", new JsonPrimitive("promote"));
+    data.add("kick", new JsonPrimitive(name));
+    datatosend = data;
+  }
+
   private static MovingObjectPosition getMouseOverExtended(float dist) {
     Minecraft mc = Minecraft.getMinecraft();
     Entity theRenderViewEntity = mc.getRenderViewEntity();

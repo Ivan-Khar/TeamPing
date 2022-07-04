@@ -1,13 +1,13 @@
 package com.aqupd.teamping.listeners;
 
 import static com.aqupd.teamping.TeamPing.*;
-import static com.aqupd.teamping.client.RenderGUI.*;
+import static com.aqupd.teamping.client.PingSelector.*;
 import static com.aqupd.teamping.setup.Registrations.keyBindings;
 import static com.aqupd.teamping.util.Configuration.debug;
 
 import com.aqupd.teamping.client.ClientThreads;
 import com.aqupd.teamping.client.PingManager;
-import com.aqupd.teamping.client.RenderGUI;
+import com.aqupd.teamping.client.PingSelector;
 import com.aqupd.teamping.client.PartyGUI;
 import com.google.gson.JsonObject;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EventListener {
-	private boolean connectedtoserver = false;
+	public static boolean connectedtoserver = false;
 	private boolean clearpings = false;
 
 	public static Socket socket;
@@ -120,7 +120,7 @@ public class EventListener {
 	@SubscribeEvent
 	public void onGuiRenderEvent(RenderGameOverlayEvent.Pre event) {
 		if (event.type == RenderGameOverlayEvent.ElementType.BOSSHEALTH && (guimenu || timer > 0)) {
-			RenderGUI.render();
+			PingSelector.render();
 		}
 	}
 }

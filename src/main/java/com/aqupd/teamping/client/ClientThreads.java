@@ -33,6 +33,7 @@ public class ClientThreads {
     new Reader().start();
     new Writer().start();
     conattempts = 0;
+    datatosend = null;
   }
 
   private class Reader extends Thread {
@@ -50,7 +51,6 @@ public class ClientThreads {
               init = false;
               if (text.equals("SUCCESS")) {
                 LOGGER.info(step);
-                step++;
               } else if (text.equals("NOTSUCCESS")) {
                 LOGGER.info(step);
                 conattempts = 3;
