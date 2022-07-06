@@ -1,11 +1,13 @@
 package com.aqupd.teamping.client;
 
 import static com.aqupd.teamping.TeamPing.*;
+import static com.aqupd.teamping.listeners.EventListener.connecting;
 import static java.lang.Math.*;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
@@ -43,7 +45,11 @@ public class SendData {
       data.add("bp", blockpos);
       data.add("type", new JsonPrimitive(type));
       data.add("uuid", new JsonPrimitive(UUID.randomUUID().toString()));
-      datatosend = data;
+
+      if (connecting) {
+        PrintWriter printWriter = new PrintWriter(outputStream, true);
+        printWriter.println(data);
+      }
       lastpingtime = System.currentTimeMillis();
     }
   }
@@ -53,39 +59,62 @@ public class SendData {
     data.add("datatype", new JsonPrimitive("party"));
     data.add("subtype", new JsonPrimitive("connect"));
     data.add("partyname", new JsonPrimitive(partyname));
-
-    datatosend = data;
+    if (connecting) {
+      PrintWriter printWriter = new PrintWriter(outputStream, true);
+      printWriter.println(data);
+    }
   }
 
   public static void leaveParty() {
     JsonObject data = new JsonObject();
     data.add("datatype", new JsonPrimitive("party"));
     data.add("subtype", new JsonPrimitive("disconnect"));
-    datatosend = data;
+    if (connecting) {
+      PrintWriter printWriter = new PrintWriter(outputStream, true);
+      printWriter.println(data);
+    }
+  }
+
+  public static void connectedPlayers() {
+    JsonObject data = new JsonObject();
+    data.add("datatype", new JsonPrimitive("list"));
+    if (connecting) {
+      PrintWriter printWriter = new PrintWriter(outputStream, true);
+      printWriter.println(data);
+    }
   }
 
   public static void kickFromParty(String name) {
     JsonObject data = new JsonObject();
     data.add("datatype", new JsonPrimitive("party"));
     data.add("subtype", new JsonPrimitive("kick"));
-    data.add("kick", new JsonPrimitive(name));
-    datatosend = data;
+    data.add("nick", new JsonPrimitive(name));
+    if (connecting) {
+      PrintWriter printWriter = new PrintWriter(outputStream, true);
+      printWriter.println(data);
+    }
   }
 
   public static void banFromParty(String name) {
     JsonObject data = new JsonObject();
     data.add("datatype", new JsonPrimitive("party"));
     data.add("subtype", new JsonPrimitive("ban"));
-    data.add("kick", new JsonPrimitive(name));
-    datatosend = data;
+    data.add("nick", new JsonPrimitive(name));
+    if (connecting) {
+      PrintWriter printWriter = new PrintWriter(outputStream, true);
+      printWriter.println(data);
+    }
   }
 
   public static void promotePartyMember(String name) {
     JsonObject data = new JsonObject();
     data.add("datatype", new JsonPrimitive("party"));
     data.add("subtype", new JsonPrimitive("promote"));
-    data.add("kick", new JsonPrimitive(name));
-    datatosend = data;
+    data.add("nick", new JsonPrimitive(name));
+    if (connecting) {
+      PrintWriter printWriter = new PrintWriter(outputStream, true);
+      printWriter.println(data);
+    }
   }
 
   private static MovingObjectPosition getMouseOverExtended(float dist) {

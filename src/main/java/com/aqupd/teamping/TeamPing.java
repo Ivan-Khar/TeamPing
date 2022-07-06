@@ -5,6 +5,7 @@ import com.aqupd.teamping.setup.Registrations;
 import com.aqupd.teamping.util.Configuration;
 import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,15 +20,16 @@ public class TeamPing {
 
 	public static final String MOD_ID = "teamping";
 	public static final String MOD_NAME = "TeamPing";
-	public static final String VERSION = "1.1";
+	public static final String VERSION = "0.1.0";
 	public static final Logger LOGGER = LogManager.getLogger("AqUpd's " + MOD_NAME);
 	public static final String[] pingidnames = new String[]{"here", "notice", "question", "no", "yes", "defend", "attack", "mine"};
 	public static List<JsonObject> pings = new ArrayList<>();
-	public static JsonObject datatosend;
 	public static String partyName = "Your party id";
+	public static int playerCount = 0;
 	public static boolean hidetext = false;
 	public static boolean isInParty = false;
 	public static ArrayList<String> partyPlayers = new ArrayList<>();
+	public static OutputStream outputStream;
 	private final EventListener eventListener;
 
 	public TeamPing() throws IOException {

@@ -1,6 +1,7 @@
 package com.aqupd.teamping.client;
 
 import static com.aqupd.teamping.TeamPing.*;
+import static com.aqupd.teamping.client.SendData.leaveParty;
 import static com.aqupd.teamping.listeners.EventListener.*;
 import static com.aqupd.teamping.util.UtilMethods.isValidJsonObject;
 
@@ -21,38 +22,60 @@ public class ClientThreads {
   private final Socket socket;
   private final EntityPlayer player;
   private final boolean debug;
-  private String reason;
-  private int step = 0;
-  private boolean init = true;
-  private boolean closed = false;
 
   public ClientThreads(Socket socket, EntityPlayer entity, Boolean debug) {
     this.socket = socket;
     this.player = entity;
     this.debug = debug;
     new Reader().start();
-    new Writer().start();
     conattempts = 0;
-    datatosend = null;
   }
 
   private class Reader extends Thread {
     public void run() {
+      JsonObject data = new JsonObject();
+      String text;
+      boolean init = true;
+      boolean writedata = true;
+      int step = 0;
+      String reason = "";
+
       try {
         InputStream input = socket.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-        String text;
+        OutputStream output = socket.getOutputStream();
+        outputStream = output;
+        PrintWriter writer = new PrintWriter(output, true);
 
         do {
-          text = reader.readLine();
+          if (!writedata) text = reader.readLine(); else text = "";
           if (text == null) break;
           if (init) {
-            if (step == 1 && text.length() != 0) {
+            if (step == 0) {
+              data.add("name", new JsonPrimitive(player.getName()));
+              String serverid = (UUID.randomUUID().toString());
+
+              JsonObject jsonObject = new JsonObject();
+              jsonObject.add("accessToken", new JsonPrimitive(Minecraft.getMinecraft().getSession().getToken()));
+              jsonObject.add("selectedProfile", new JsonPrimitive(player.getUniqueID().toString().replace("-", "")));
+              jsonObject.add("serverId", new JsonPrimitive(serverid));
+              if (!debug) {
+                CloseableHttpClient httpclient = HttpClients.createDefault();
+                String query = jsonObject.toString();
+                StringEntity requestEntity = new StringEntity(query, ContentType.APPLICATION_JSON);
+                HttpPost postMethod = new HttpPost("https://sessionserver.mojang.com/session/minecraft/join");
+                postMethod.setEntity(requestEntity);
+                httpclient.execute(postMethod);
+              }
+              data.add("serverid", new JsonPrimitive(serverid));
+              writer.println(data);
+              step++;
+              writedata = false;
+            } else if (step == 1 && text.length() != 0) {
               init = false;
               if (text.equals("SUCCESS")) {
-                LOGGER.info(step);
+                new KeepAlive().start();
               } else if (text.equals("NOTSUCCESS")) {
-                LOGGER.info(step);
                 conattempts = 3;
                 reason = "Server couldn't verify you. Restart your game in order to connect";
                 break;
@@ -60,7 +83,6 @@ public class ClientThreads {
             }
           } else if (isValidJsonObject(text)) {
             JsonObject jo = new JsonParser().parse(text).getAsJsonObject();
-            LOGGER.info("received data " + jo);
             switch (jo.get("datatype").getAsString()) {
               case "ping":
                 jo.add("time", new JsonPrimitive(System.currentTimeMillis()));
@@ -89,75 +111,49 @@ public class ClientThreads {
                     for(JsonElement je: ja) newPartyPlayers.add(je.getAsString());
                     partyPlayers = newPartyPlayers;
                     break;
+                  case "kickmessage":
+                    isInParty = false;
+                    partyPlayers.clear();
+                    leaveParty();
+                    switch (jo.get("message").getAsString()) {
+                      case "kicked":
+                        LOGGER.info("you got kicked from the party");
+                        break;
+                      case "banned":
+                        LOGGER.info("you got banned from the party");
+                        break;
+                      case "playerlimit":
+                        LOGGER.info("Party is full");
+                    }
                 }
+                break;
+              case "list":
+                playerCount = jo.get("connected").getAsInt();
             }
           }
-        } while (!closed);
-        closed = true;
-        connecting = false;
-        isInParty = false;
+        } while (true);
         socket.close();
         LOGGER.info("DISCONNECTED" + (reason.length() == 0 ? "" : " with reason: " + reason));
       } catch (IOException ex) {
         LOGGER.error("Client reader exception", ex);
-        isInParty = false;
-        closed = true;
+      } finally {
         connecting = false;
+        isInParty = false;
+        outputStream = null;
       }
     }
   }
 
-  private class Writer extends Thread {
+  private static class KeepAlive extends Thread {
     public void run() {
-      try {
-        OutputStream output = socket.getOutputStream();
-        PrintWriter writer = new PrintWriter(output, true);
-        JsonObject data = new JsonObject();
-        long pingtime = System.currentTimeMillis();
-
-        do {
-          JsonObject data1 = new JsonObject();
-          if (socket.isClosed()) break;
-          if (datatosend != null) data1 = datatosend;
-          if (init) {
-            if (step == 0) {
-              data.add("name", new JsonPrimitive(player.getName()));
-              String serverid = (UUID.randomUUID().toString());
-
-              JsonObject jsonObject = new JsonObject();
-              jsonObject.add("accessToken", new JsonPrimitive(Minecraft.getMinecraft().getSession().getToken()));
-              jsonObject.add("selectedProfile", new JsonPrimitive(player.getUniqueID().toString().replace("-", "")));
-              jsonObject.add("serverId", new JsonPrimitive(serverid));
-              if (!debug) {
-                CloseableHttpClient httpclient = HttpClients.createDefault();
-                String query = jsonObject.toString();
-                StringEntity requestEntity = new StringEntity(query, ContentType.APPLICATION_JSON);
-                HttpPost postMethod = new HttpPost("https://sessionserver.mojang.com/session/minecraft/join");
-                postMethod.setEntity(requestEntity);
-                httpclient.execute(postMethod);
-              }
-              data.add("serverid", new JsonPrimitive(serverid));
-              LOGGER.info(step + " " + data);
-              writer.println(data);
-              step++;
-            }
-          } else if ((System.currentTimeMillis() - pingtime) > 1000) {
-            writer.println("PING");
-            pingtime = System.currentTimeMillis();
-          } else if (!data1.equals(new JsonObject())) {
-            LOGGER.info("send data " + data1);
-            writer.println(data1);
-            datatosend = new JsonObject();
-          }
-        } while (!closed);
-        closed = true;
-        connecting = false;
-        LOGGER.info("Client writer stopped");
-      } catch (IOException ex) {
-        closed = true;
-        connecting = false;
-        LOGGER.error("Client writer exception", ex);
-      }
+      long lastping = System.currentTimeMillis();
+      do {
+        if (System.currentTimeMillis() - lastping > 1000) {
+          PrintWriter printWriter = new PrintWriter(outputStream, true);
+          printWriter.println("PING");
+          lastping = System.currentTimeMillis();
+        }
+      } while (connecting);
     }
   }
 }

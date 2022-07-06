@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 import com.aqupd.teamping.util.GuiTextFieldHiddenText;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.client.Minecraft;
@@ -40,7 +41,7 @@ public class PartyGUI extends GuiScreen {
     joinButton.displayString = isInParty?"Disconnect":"Join/Create";
     copyButton.enabled = isInParty;
     copyButton.visible = isInParty;
-    connectButton.enabled = !connecting;
+    connectButton.enabled = !connecting && (conattempts != 3);
     partyNameField.setEnabled(!israndom && !isInParty);
     partyNameField.setHideText(hidetext);
     if (!isInParty) {
@@ -79,7 +80,8 @@ public class PartyGUI extends GuiScreen {
     randomcheckbox.visible = !isInParty;
     copyButton.enabled = isInParty;
     copyButton.visible = isInParty;
-    connectButton.enabled = !connecting;
+    connectButton.enabled = !connecting && (conattempts != 3);
+    connectedPlayers();
     super.initGui();
   }
 
@@ -99,7 +101,7 @@ public class PartyGUI extends GuiScreen {
     partyNameField.drawTextBox();
     joinButton.enabled = (!partyName.equals("Your party id") && partyName.length() >= 3);
 
-    if(isInParty) {
+    if (isInParty) {
       fontRendererObj.drawString(text1, (rwidth/2 - fontRendererObj.getStringWidth(text1) / 2), posY+72, 3158064);
       int i = 0;
       enableButtons = partyPlayers.toArray()[0].equals(mc.thePlayer.getName());
@@ -109,7 +111,7 @@ public class PartyGUI extends GuiScreen {
         GlStateManager.color(255, 255, 255, 255);
         Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pingsmenugui.png"));
         drawTexturedModalRect(xpos, ypos, 0, 222, 120, 12);
-        if(enableButtons && !Objects.equals(s, mc.thePlayer.getName())) {
+        if (enableButtons && !Objects.equals(s, mc.thePlayer.getName())) {
           if (isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12))
             drawTexturedModalRect(xpos + 123, ypos, 12, 234, 12, 12);
           else drawTexturedModalRect(xpos + 123, ypos, 0, 234, 12, 12);
@@ -124,9 +126,9 @@ public class PartyGUI extends GuiScreen {
           drawTexturedModalRect(xpos+137, ypos+1, 10, 246, 10, 10);
           drawTexturedModalRect(xpos+150, ypos+1, 20, 246, 10, 10);
         } else {
-          drawTexturedModalRect(xpos + 123, ypos, 24, 234, 12, 12);
-          drawTexturedModalRect(xpos + 136, ypos, 24, 234, 12, 12);
-          drawTexturedModalRect(xpos + 149, ypos, 24, 234, 12, 12);
+          drawTexturedModalRect(xpos+123, ypos, 24, 234, 12, 12);
+          drawTexturedModalRect(xpos+136, ypos, 24, 234, 12, 12);
+          drawTexturedModalRect(xpos+149, ypos, 24, 234, 12, 12);
 
           drawTexturedModalRect(xpos+124, ypos+1, 30, 246, 10, 10);
           drawTexturedModalRect(xpos+137, ypos+1, 40, 246, 10, 10);
@@ -135,6 +137,14 @@ public class PartyGUI extends GuiScreen {
 
         fontRendererObj.drawString(s, xpos+3, ypos+2, 16777215, true);
         i++;
+        if(isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12)) {
+          drawHoveringText(Collections.singletonList("Ban player"), mouseX, mouseY, fontRendererObj);
+        } else if(isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12)) {
+          drawHoveringText(Collections.singletonList("Kick player"), mouseX, mouseY, fontRendererObj);
+        } else if(isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12)) {
+          drawHoveringText(Collections.singletonList("Promote player"), mouseX, mouseY, fontRendererObj);
+        }
+        GlStateManager.disableLighting();
       }
     }
 
@@ -143,9 +153,16 @@ public class PartyGUI extends GuiScreen {
     drawTexturedModalRect(posX, posY1-32, 176, 0, 64, 32);
     GlStateManager.enableBlend();
     GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    if (!connecting) drawTexturedModalRect(posX + 46, posY1-22, 176, 32, 10, 10);
-    else drawTexturedModalRect(posX + 46, posY1-22, 176, 42, 10, 10);
-    fontRendererObj.drawString("Status:", posX + 8, posY1-21, 3158064);
+    if (!connecting) {
+      drawTexturedModalRect(posX + 42, posY1-26, 176, 32, 10, 10);
+      fontRendererObj.drawString("Con: N/A", posX + 4, posY1-15, 3158064);
+    }
+    else {
+      drawTexturedModalRect(posX + 42, posY1 - 26, 176, 42, 10, 10);
+      fontRendererObj.drawString("Con: " + playerCount, posX + 4, posY1-15, 3158064);
+    }
+    fontRendererObj.drawString("Status:", posX + 4, posY1-25, 3158064);
+    GlStateManager.color(255, 255, 255, 255);
     super.drawScreen(mouseX, mouseY, partialTicks);
   }
 
@@ -182,15 +199,17 @@ public class PartyGUI extends GuiScreen {
       for (String s : partyPlayers) {
         int xpos = posX + 7;
         int ypos = posY + 82 + 13 * i;
-        if (isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12)) {
-          banFromParty(s);
-          mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-        } else if (isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12)) {
-          kickFromParty(s);
-          mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-        } else if (isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12)) {
-          promotePartyMember(s);
-          mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        if (!s.equals(mc.thePlayer.getName())) {
+          if (isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12)) {
+            banFromParty(s);
+            mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+          } else if (isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12)) {
+            kickFromParty(s);
+            mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+          } else if (isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12)) {
+            promotePartyMember(s);
+            mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+          }
         }
         i++;
       }
