@@ -3,6 +3,7 @@ package com.aqupd.teamping.client;
 import static com.aqupd.teamping.TeamPing.*;
 import static com.aqupd.teamping.client.SendData.*;
 import static com.aqupd.teamping.listeners.EventListener.*;
+import static com.aqupd.teamping.util.UtilMethods.isMouseOver;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
@@ -217,16 +218,11 @@ public class PartyGUI extends GuiScreen {
   }
 
   @Override
-  protected void keyTyped(char typedChar, int keyCode) throws IOException
-  {
+  protected void keyTyped(char typedChar, int keyCode) throws IOException {
     super.keyTyped(typedChar, keyCode);
     if (partyNameField.isFocused()) {
       partyNameField.textboxKeyTyped(typedChar, keyCode);
       partyName = partyNameField.getText();
     }
-  }
-
-  private boolean isMouseOver(int bmouseX, int bmouseY, int bx, int by, int bwidth, int bheight) {
-    return ((bmouseX > bx) && (bmouseX < bx + bwidth) && (bmouseY > by) && (bmouseY < by + bheight));
   }
 }

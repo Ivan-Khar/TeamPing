@@ -44,4 +44,8 @@ public class UtilMethods {
     GlStateManager.enableTexture2D();
     GlStateManager.disableBlend();
   }
+
+  public static boolean isMouseOver(int bmouseX, int bmouseY, int bx, int by, int bwidth, int bheight) {
+    return ((bmouseX > bx) && (bmouseX < bx + bwidth) && (bmouseY > by) && (bmouseY < by + bheight));
+  }
 }

@@ -1,5 +1,6 @@
 package com.aqupd.teamping;
 
+import com.aqupd.teamping.commands.TeamPingCommand;
 import com.aqupd.teamping.listeners.EventListener;
 import com.aqupd.teamping.setup.Registrations;
 import com.aqupd.teamping.util.Configuration;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -41,5 +43,6 @@ public class TeamPing {
 	@EventHandler
 	public void init(FMLInitializationEvent ev) {
 		MinecraftForge.EVENT_BUS.register(eventListener);
+		ClientCommandHandler.instance.registerCommand(new TeamPingCommand());
 	}
 }

@@ -62,6 +62,7 @@ public class SendData {
     if (connecting) {
       PrintWriter printWriter = new PrintWriter(outputStream, true);
       printWriter.println(data);
+      partyName = partyname;
     }
   }
 
@@ -72,6 +73,10 @@ public class SendData {
     if (connecting) {
       PrintWriter printWriter = new PrintWriter(outputStream, true);
       printWriter.println(data);
+    }
+    if (isInParty) {
+      isInParty = false;
+      partyPlayers.clear();
     }
   }
 

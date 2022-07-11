@@ -11,6 +11,7 @@
       "Aqua_tic(AqUpd)"
     ],
     "credits": "Clyred and nekoli",
-    "dependencies": []
+    "dependencies": [],
+    "logoFile": "icon.png"
   }
 ]
