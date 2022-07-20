@@ -145,7 +145,7 @@ public class EventListener {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onChatMessage(ClientChatReceivedEvent event) {
-		String chattext = event.message.getUnformattedTextForChat();
+		String chattext = event.message.getFormattedText();
 		Matcher matcher = Pattern.compile("teamping:.{3,32}").matcher(chattext);
 		if(matcher.find()){
 			String partyid = matcher.group().substring(9);
