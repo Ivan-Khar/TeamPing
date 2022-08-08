@@ -17,7 +17,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
 
-version = "0.1.1"
+version = "0.1.2"
 group = "com.aqupd"
 archivesBaseName = "teamping"
 String modid = "teamping"

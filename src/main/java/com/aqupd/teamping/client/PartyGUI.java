@@ -92,8 +92,7 @@ public class PartyGUI extends GuiScreen {
 
     Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pingsmenugui.png"));
     drawTexturedModalRect(posX, posY, 0, 0, menuX, menuY);
-
-    String text = "Pings party";
+    String text = "Pings party" + (VERSION.equals(GitVersion) ? "" : ". §4§lUpdate to " + GitVersion + "!");
     String text1 = "Player list";
 
     fontRendererObj.drawString("hide", rwidth/2 + 15, posY + 52, 3158064);

@@ -129,6 +129,7 @@ public class ClientThreads {
                 break;
               case "list":
                 playerCount = jo.get("connected").getAsInt();
+                GitVersion = jo.get("version").getAsString();
             }
           }
         } while (true);
