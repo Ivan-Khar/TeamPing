@@ -3,17 +3,22 @@ package com.aqupd.teamping.client;
 import static com.aqupd.teamping.TeamPing.*;
 import static com.aqupd.teamping.client.SendData.*;
 import static com.aqupd.teamping.listeners.EventListener.*;
+import static com.aqupd.teamping.setup.Registrations.keyBindings;
 import static java.lang.Math.*;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+@SuppressWarnings("IntegerDivisionInFloatingPointContext")
 public class PingSelector {
   private static boolean menu;
   public static double cX = 0;
@@ -23,14 +28,22 @@ public class PingSelector {
     Minecraft mc = Minecraft.getMinecraft();
     Tessellator tes = Tessellator.getInstance();
     WorldRenderer wr = tes.getWorldRenderer();
-
+    FontRenderer fr = mc.fontRendererObj;
     try {
-      mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings.png"));
       ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
       double width = sr.getScaledWidth_double();
       double height = sr.getScaledHeight_double();
       double linestart = 10;
       double linewidth = linestart + Math.min(timer, 4)*4;
+
+      String s1 = "You need to join party first!";
+      String s2 = "Use \"" + Keyboard.getKeyName(keyBindings[2].getKeyCode()) + "\" in order to open party menu";
+
+      if(partyName.equals("Your party id") || partyName.length() < 3) {
+        fr.drawString(s1, (float) (width / 2) - (fr.getStringWidth(s1) / 2), (float) height / 2 - 64, 16711680, true);
+        fr.drawString(s2, (float) (width / 2) - (fr.getStringWidth(s2) / 2), (float) height / 2 + 64, 16711680, true);
+      }
+
       GlStateManager.enableBlend();
       GlStateManager.disableTexture2D();
       GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -160,6 +173,7 @@ public class PingSelector {
 
         double minU;
         double maxU;
+        mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings.png"));
         GlStateManager.enableTexture2D();
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 

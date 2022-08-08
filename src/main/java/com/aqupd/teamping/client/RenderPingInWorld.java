@@ -45,69 +45,71 @@ public class RenderPingInWorld {
       mc.renderEngine.bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pings.png"));
       if (pings.size() != 0) {
         for (JsonObject data: pings) {
-          JsonArray jblock = data.get("bp").getAsJsonArray();
-          JsonArray jcolor = data.get("color").getAsJsonArray();
-          String type = data.get("type").getAsString();
-          boolean isEntity = data.get("isEntity").getAsBoolean();
+          try {
+            JsonArray jblock = data.get("bp").getAsJsonArray();
+            JsonArray jcolor = data.get("color").getAsJsonArray();
+            String type = data.get("type").getAsString();
+            boolean isEntity = data.get("isEntity").getAsBoolean();
 
-          Color color = new Color(jcolor.get(0).getAsInt(), jcolor.get(1).getAsInt(), jcolor.get(2).getAsInt());
-          BlockPos bp = new BlockPos(jblock.get(0).getAsInt(), jblock.get(1).getAsInt(), jblock.get(2).getAsInt());
+            Color color = new Color(jcolor.get(0).getAsInt(), jcolor.get(1).getAsInt(), jcolor.get(2).getAsInt());
+            BlockPos bp = new BlockPos(jblock.get(0).getAsInt(), jblock.get(1).getAsInt(), jblock.get(2).getAsInt());
 
-          double dist = distanceTo3D(e, bp);
-          double dist2d = distanceTo2D(e, bp);
+            double dist = distanceTo3D(e, bp);
+            double dist2d = distanceTo2D(e, bp);
 
-          if (dist2d < Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16) {
-            double iPX = -interpPosX;
-            double iPY = -interpPosY;
-            double iPZ = -interpPosZ;
-            wr.setTranslation(iPX, iPY, iPZ);
-            GL11.glLineWidth((float) (10 / dist));
-            AxisAlignedBB aabb = new AxisAlignedBB(bp, bp.add(1, 1, 1));
+            if (dist2d < Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16) {
+              double iPX = -interpPosX;
+              double iPY = -interpPosY;
+              double iPZ = -interpPosZ;
+              wr.setTranslation(iPX, iPY, iPZ);
+              GL11.glLineWidth((float) (10 / dist));
+              AxisAlignedBB aabb = new AxisAlignedBB(bp, bp.add(1, 1, 1));
 
-            long pingtime = data.get("time").getAsLong();
-            int lifetime = (int) (System.currentTimeMillis() - pingtime);
+              long pingtime = data.get("time").getAsLong();
+              int lifetime = (int) (System.currentTimeMillis() - pingtime);
 
-            int lifefade = lifetime/2;
-            int lifefadeback = 15000/2 - lifefade;
-            int trpy = (lifetime > 15000) ? 0 : min(255, (lifefade > 255) ? lifefadeback : lifefade);
+              int lifefade = lifetime / 2;
+              int lifefadeback = 15000 / 2 - lifefade;
+              int trpy = (lifetime > 15000) ? 0 : min(255, (lifefade > 255) ? lifefadeback : lifefade);
 
-            if (dist2d < 6) trpy = trpy/2;
+              if (dist2d < 6) trpy = trpy / 2;
 
-            drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), (int) (trpy/1.5), isEntity);
-            drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy/6, isEntity);
+              drawOutline(aabb, color.getRed(), color.getGreen(), color.getBlue(), (int) (trpy / 1.5), isEntity);
+              drawBox(aabb, color.getRed(), color.getGreen(), color.getBlue(), trpy / 6, isEntity);
 
-            float bx = jblock.get(0).getAsFloat() + 0.5F;
-            float by = jblock.get(1).getAsFloat() + 0.5F;
-            float bz = jblock.get(2).getAsFloat() + 0.5F;
+              float bx = jblock.get(0).getAsFloat() + 0.5F;
+              float by = jblock.get(1).getAsFloat() + 0.5F;
+              float bz = jblock.get(2).getAsFloat() + 0.5F;
 
-            wr.setTranslation(iPX + bx, iPY, iPZ + bz);
-            switch (type) {
-              case "here":
-                renderPing(trpy, 0, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
-              case "notice":
-                renderPing(trpy, 1, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
-              case "question":
-                renderPing(trpy, 2, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
-              case "no":
-                renderPing(trpy, 3, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
-              case "yes":
-                renderPing(trpy, 4, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
-              case "defend":
-                renderPing(trpy, 5, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
-              case "attack":
-                renderPing(trpy, 6, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
-              case "mine":
-                renderPing(trpy, 7, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
-                break;
+              wr.setTranslation(iPX + bx, iPY, iPZ + bz);
+              switch (type) {
+                case "here":
+                  renderPing(trpy, 0, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                  break;
+                case "notice":
+                  renderPing(trpy, 1, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                  break;
+                case "question":
+                  renderPing(trpy, 2, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                  break;
+                case "no":
+                  renderPing(trpy, 3, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                  break;
+                case "yes":
+                  renderPing(trpy, 4, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                  break;
+                case "defend":
+                  renderPing(trpy, 5, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                  break;
+                case "attack":
+                  renderPing(trpy, 6, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                  break;
+                case "mine":
+                  renderPing(trpy, 7, bx, by, bz, color.getRed(), color.getGreen(), color.getBlue(), pticks, bp);
+                  break;
+              }
             }
-          }
+          } catch (Exception ignored) {}
         }
       }
     } catch(Exception e) {
