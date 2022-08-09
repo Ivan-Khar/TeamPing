@@ -1,21 +1,23 @@
 package com.aqupd.teamping.client;
 
-import static com.aqupd.teamping.TeamPing.*;
-import static com.aqupd.teamping.listeners.EventListener.connecting;
-import static java.lang.Math.*;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.UUID;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.UUID;
+
+import static com.aqupd.teamping.TeamPing.*;
+import static com.aqupd.teamping.listeners.EventListener.connecting;
+import static java.lang.Math.min;
 
 public class SendData {
   public static long lastpingtime = 0;
@@ -29,7 +31,7 @@ public class SendData {
       data.add("datatype", new JsonPrimitive("ping"));
 
       BlockPos bp;
-      if (e != null) {
+      if (e instanceof EntityPlayer) {
         bp = e.getPosition();
         data.add("isEntity", new JsonPrimitive(true));
       } else {
