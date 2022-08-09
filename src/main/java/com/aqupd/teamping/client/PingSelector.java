@@ -35,7 +35,7 @@ public class PingSelector {
       double linestart = 10;
       double linewidth = linestart + Math.min(timer, 4)*4;
 
-      String s1 = "You need to join party first!";
+      String s1 = "You need to join a party first!";
       String s2 = "Use \"" + Keyboard.getKeyName(keyBindings[2].getKeyCode()) + "\" in order to open party menu";
 
       if(partyName.equals("Your party id") || partyName.length() < 3) {
