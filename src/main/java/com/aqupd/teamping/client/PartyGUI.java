@@ -37,8 +37,22 @@ public class PartyGUI extends GuiScreen {
   public void updateScreen() {
     hidetext = hidecheckbox.isChecked();
     israndom = randomcheckbox.isChecked();
-    randomcheckbox.enabled = !isInParty;
-    randomcheckbox.visible = !isInParty;
+    if(false) {
+      randomcheckbox.enabled = !isInParty;
+      randomcheckbox.visible = !isInParty;
+      hidecheckbox.enabled = true;
+      hidecheckbox.visible = true;
+      joinButton.enabled = true;
+      joinButton.visible = true;
+    } else {
+      randomcheckbox.enabled = false;
+      randomcheckbox.visible = false;
+      hidecheckbox.enabled = false;
+      hidecheckbox.visible = false;
+      joinButton.enabled = false;
+      joinButton.visible = false;
+    }
+
     joinButton.displayString = isInParty?"Disconnect":"Join/Create";
     copyButton.enabled = isInParty;
     copyButton.visible = isInParty;
@@ -91,63 +105,90 @@ public class PartyGUI extends GuiScreen {
     drawDefaultBackground();
 
     Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pingsmenugui.png"));
-    drawTexturedModalRect(posX, posY, 0, 0, menuX, menuY);
-    String text = "Pings party" + (VERSION.equals(GitVersion) ? "" : ". §4§lUpdate to " + GitVersion + "!");
-    String text1 = "Player list";
+    drawTexturedModalRect(posX, posY, 0, 0, menuX, menuY); //MainGUI
 
-    fontRendererObj.drawString("hide", rwidth/2 + 15, posY + 52, 3158064);
-    if (!isInParty) fontRendererObj.drawString("random", rwidth/2 + 49, posY + 52, 3158064);
-    fontRendererObj.drawString(text, (rwidth/2 - fontRendererObj.getStringWidth(text) / 2), posY+9, 3158064);
-    partyNameField.drawTextBox();
-    joinButton.enabled = (!partyName.equals("Your party id") && partyName.length() >= 3);
-
-    if (isInParty) {
-      fontRendererObj.drawString(text1, (rwidth/2 - fontRendererObj.getStringWidth(text1) / 2), posY+72, 3158064);
-      int i = 0;
-      enableButtons = partyPlayers.toArray()[0].equals(mc.thePlayer.getName());
-      for (String s: partyPlayers) {
-        int xpos = posX + 7;
-        int ypos = posY + 82 + 13*i;
-        GlStateManager.color(255, 255, 255, 255);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pingsmenugui.png"));
-        drawTexturedModalRect(xpos, ypos, 0, 222, 120, 12);
-        if (enableButtons && !Objects.equals(s, mc.thePlayer.getName())) {
-          if (isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12))
-            drawTexturedModalRect(xpos + 123, ypos, 12, 234, 12, 12);
-          else drawTexturedModalRect(xpos + 123, ypos, 0, 234, 12, 12);
-          if (isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12))
-            drawTexturedModalRect(xpos + 136, ypos, 12, 234, 12, 12);
-          else drawTexturedModalRect(xpos + 136, ypos, 0, 234, 12, 12);
-          if (isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12))
-            drawTexturedModalRect(xpos + 149, ypos, 12, 234, 12, 12);
-          else drawTexturedModalRect(xpos + 149, ypos, 0, 234, 12, 12);
-
-          drawTexturedModalRect(xpos+124, ypos+1, 0, 246, 10, 10);
-          drawTexturedModalRect(xpos+137, ypos+1, 10, 246, 10, 10);
-          drawTexturedModalRect(xpos+150, ypos+1, 20, 246, 10, 10);
-        } else {
-          drawTexturedModalRect(xpos+123, ypos, 24, 234, 12, 12);
-          drawTexturedModalRect(xpos+136, ypos, 24, 234, 12, 12);
-          drawTexturedModalRect(xpos+149, ypos, 24, 234, 12, 12);
-
-          drawTexturedModalRect(xpos+124, ypos+1, 30, 246, 10, 10);
-          drawTexturedModalRect(xpos+137, ypos+1, 40, 246, 10, 10);
-          drawTexturedModalRect(xpos+150, ypos+1, 50, 246, 10, 10);
-        }
-
-        fontRendererObj.drawString(s, xpos+3, ypos+2, 16777215, true);
-        i++;
-        if(isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12)) {
-          drawHoveringText(Collections.singletonList("Ban player"), mouseX, mouseY, fontRendererObj);
-        } else if(isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12)) {
-          drawHoveringText(Collections.singletonList("Kick player"), mouseX, mouseY, fontRendererObj);
-        } else if(isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12)) {
-          drawHoveringText(Collections.singletonList("Promote player"), mouseX, mouseY, fontRendererObj);
-        }
-        GlStateManager.disableLighting();
+    String menu1 = "Your party";
+    String menu2 = "Party list";
+    if(false) {
+      drawTexturedModalRect(posX + 3, posY - 16, 0, 237, 84, 19); //Menu1 Button
+      if(isMouseOver(mouseX, mouseY,posX + 88, posY - 16, 84, 19)) {
+        drawTexturedModalRect(posX + 88, posY - 16, 168, 237, 84, 19); //Menu2 Button
+        fontRendererObj.drawStringWithShadow(menu2, posX + 130 - fontRendererObj.getStringWidth(menu2)/2, posY - 10, 16777120);
+      } else {
+        drawTexturedModalRect(posX + 88, posY - 16, 84, 237, 84, 19); //Menu2 Button
+        fontRendererObj.drawStringWithShadow(menu2, posX + 130 - fontRendererObj.getStringWidth(menu2)/2, posY - 10, 14737632);
       }
+      fontRendererObj.drawString(menu1, posX + 45 - fontRendererObj.getStringWidth(menu1)/2, posY - 10, 3158064);
+    } else {
+      drawTexturedModalRect(posX + 88, posY - 16, 0, 237, 84, 19); //Menu2 Button
+      if(isMouseOver(mouseX, mouseY,posX + 3, posY - 16, 84, 19)) {
+        drawTexturedModalRect(posX + 3, posY - 16, 168, 237, 84, 19); //Menu1 Button
+        fontRendererObj.drawStringWithShadow(menu1, posX + 45 - fontRendererObj.getStringWidth(menu1)/2, posY - 10, 16777120);
+      } else {
+        drawTexturedModalRect(posX + 3, posY - 16, 84, 237, 84, 19); //Menu1 Button
+        fontRendererObj.drawStringWithShadow(menu1, posX + 45 - fontRendererObj.getStringWidth(menu1)/2, posY - 10, 14737632);
+      }
+      fontRendererObj.drawString(menu2, posX + 130 - fontRendererObj.getStringWidth(menu2)/2, posY - 10, 3158064);
     }
 
+
+    String text = ((false) ? "Pings party" : "Parties") + (VERSION.equals(GitVersion) ? "" : ". §4§lUpdate to " + GitVersion + "!");
+    String text1 = "Player list";
+    fontRendererObj.drawString(text, (rwidth/2 - fontRendererObj.getStringWidth(text) / 2), posY+9, 3158064); //Title
+    if(false) {
+      fontRendererObj.drawString("hide", rwidth / 2 + 15, posY + 52, 3158064);
+      if (!isInParty) fontRendererObj.drawString("random", rwidth / 2 + 49, posY + 52, 3158064);
+
+      partyNameField.drawTextBox();
+      joinButton.enabled = (!partyName.equals("Your party id") && partyName.length() >= 3);
+
+      if (isInParty) {
+        fontRendererObj.drawString(text1, (rwidth / 2 - fontRendererObj.getStringWidth(text1) / 2), posY + 72, 3158064);
+        int i = 0;
+        enableButtons = partyPlayers.toArray()[0].equals(mc.thePlayer.getName());
+        for (String s : partyPlayers) {
+          int xpos = posX + 7;
+          int ypos = posY + 82 + 13 * i;
+          GlStateManager.color(255, 255, 255, 255);
+          Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pingsmenugui.png"));
+          drawTexturedModalRect(xpos, ypos, 0, 222, 120, 12);
+          if (enableButtons && !Objects.equals(s, mc.thePlayer.getName())) {
+            if (isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12))
+              drawTexturedModalRect(xpos + 123, ypos, 200, 32, 12, 12); //Ban button
+            else drawTexturedModalRect(xpos + 123, ypos, 188, 32, 12, 12); //Ban button
+            if (isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12))
+              drawTexturedModalRect(xpos + 136, ypos, 200, 32, 12, 12); // Kick button
+            else drawTexturedModalRect(xpos + 136, ypos, 188, 32, 12, 12); // Kick button
+            if (isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12))
+              drawTexturedModalRect(xpos + 149, ypos, 200, 32, 12, 12); // Promote button
+            else drawTexturedModalRect(xpos + 149, ypos, 188, 32, 12, 12); // Promote button
+
+            drawTexturedModalRect(xpos + 124, ypos + 1, 188, 44, 10, 10); //Ban button
+            drawTexturedModalRect(xpos + 137, ypos + 1, 198, 44, 10, 10); // Kick button
+            drawTexturedModalRect(xpos + 150, ypos + 1, 208, 44, 10, 10); // Promote button
+          } else {
+            drawTexturedModalRect(xpos + 123, ypos, 212, 32, 12, 12); //Ban button
+            drawTexturedModalRect(xpos + 136, ypos, 212, 32, 12, 12); // Kick button
+            drawTexturedModalRect(xpos + 149, ypos, 212, 32, 12, 12); // Promote button
+
+            drawTexturedModalRect(xpos + 124, ypos + 1, 218, 44, 10, 10); //Ban button
+            drawTexturedModalRect(xpos + 137, ypos + 1, 228, 44, 10, 10); // Kick button
+            drawTexturedModalRect(xpos + 150, ypos + 1, 238, 44, 10, 10); // Promote button
+          }
+
+          fontRendererObj.drawString(s, xpos + 3, ypos + 2, 16777215, true);
+          i++;
+          if (isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12)) {
+            drawHoveringText(Collections.singletonList("Ban player"), mouseX, mouseY, fontRendererObj);
+          } else if (isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12)) {
+            drawHoveringText(Collections.singletonList("Kick player"), mouseX, mouseY, fontRendererObj);
+          } else if (isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12)) {
+            drawHoveringText(Collections.singletonList("Promote player"), mouseX, mouseY, fontRendererObj);
+          }
+          GlStateManager.disableLighting();
+        }
+      }
+    }
     Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pingsmenugui.png"));
     GlStateManager.color(172, 172, 172, 255);
     drawTexturedModalRect(posX, posY1-32, 176, 0, 64, 32);
