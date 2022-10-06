@@ -21,7 +21,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings({"FieldCanBeLocal", "DuplicatedCode"})
 public class PartyGUI extends GuiScreen {
   private GuiTextFieldHiddenText partyNameField;
   private GuiButton joinButton;
@@ -29,6 +29,7 @@ public class PartyGUI extends GuiScreen {
   private GuiButton connectButton;
   private GuiCheckBox hidecheckbox;
   private GuiCheckBox randomcheckbox;
+  private GuiCheckBox publiccheckbox;
   private Boolean israndom = false;
   private int rwidth, rheight, menuX, menuY, posX, posY, posY1;
   private boolean enableButtons = false;
@@ -37,23 +38,14 @@ public class PartyGUI extends GuiScreen {
   public void updateScreen() {
     hidetext = hidecheckbox.isChecked();
     israndom = randomcheckbox.isChecked();
-    if(false) {
-      randomcheckbox.enabled = !isInParty;
-      randomcheckbox.visible = !isInParty;
-      hidecheckbox.enabled = true;
-      hidecheckbox.visible = true;
-      joinButton.enabled = true;
-      joinButton.visible = true;
-    } else {
-      randomcheckbox.enabled = false;
-      randomcheckbox.visible = false;
-      hidecheckbox.enabled = false;
-      hidecheckbox.visible = false;
-      joinButton.enabled = false;
-      joinButton.visible = false;
-    }
-
+    randomcheckbox.enabled = !isInParty;
+    randomcheckbox.visible = !isInParty;
+    hidecheckbox.enabled = true;
+    hidecheckbox.visible = true;
+    joinButton.enabled = true;
+    joinButton.visible = true;
     joinButton.displayString = isInParty?"Disconnect":"Join/Create";
+    joinButton.width = isInParty?70:110;
     copyButton.enabled = isInParty;
     copyButton.visible = isInParty;
     connectButton.enabled = !connecting && (conattempts != 3);
@@ -79,16 +71,16 @@ public class PartyGUI extends GuiScreen {
     posY = (rheight - menuY) / 2;
     posY1 = (rheight + menuY) / 2;
 
-    partyNameField = new GuiTextFieldHiddenText(1, fontRendererObj, posX + 8, posY + 24, menuX - 16, 20);
+    partyNameField = new GuiTextFieldHiddenText(1, fontRendererObj, posX + 8, posY + 24, menuX - 48, 20);
     partyNameField.setEnableBackgroundDrawing(true);
     partyNameField.setMaxStringLength(32);
     partyNameField.setText(partyName);
     partyNameField.setHideText(hidetext);
     partyNameField.setEnabled(!israndom && !isInParty);
 
-    buttonList.add(joinButton = new GuiButton(0, posX + 8, posY + 46, 80, 20, isInParty?"Disconnect":"Join/Create"));
-    buttonList.add(hidecheckbox = new GuiCheckBox(1, rwidth/2+2, posY + 50, "", hidetext));
-    buttonList.add(randomcheckbox = new GuiCheckBox(2, rwidth/2+36, posY + 50, "", israndom));
+    buttonList.add(joinButton = new GuiButton(0, posX + 8, posY + 46, isInParty?70:110, 20, isInParty?"Disconnect":"Join/Create"));
+    buttonList.add(hidecheckbox = new GuiCheckBox(1, posX + menuX - 38, posY + 28, "", hidetext));
+    buttonList.add(randomcheckbox = new GuiCheckBox(2, rwidth/2+32, posY + 50, "", israndom));
     buttonList.add(copyButton = new GuiButton(3, rwidth/2+36, posY + 46, 45, 20, "Copy"));
     buttonList.add(connectButton = new GuiButton(4, posX + 67, posY1-26, 103, 20, "Connect to server"));
     randomcheckbox.enabled = !isInParty;
@@ -109,84 +101,71 @@ public class PartyGUI extends GuiScreen {
 
     String menu1 = "Your party";
     String menu2 = "Party list";
-    if(false) {
-      drawTexturedModalRect(posX + 3, posY - 16, 0, 237, 84, 19); //Menu1 Button
-      if(isMouseOver(mouseX, mouseY,posX + 88, posY - 16, 84, 19)) {
-        drawTexturedModalRect(posX + 88, posY - 16, 168, 237, 84, 19); //Menu2 Button
-        fontRendererObj.drawStringWithShadow(menu2, posX + 130 - fontRendererObj.getStringWidth(menu2)/2, posY - 10, 16777120);
-      } else {
-        drawTexturedModalRect(posX + 88, posY - 16, 84, 237, 84, 19); //Menu2 Button
-        fontRendererObj.drawStringWithShadow(menu2, posX + 130 - fontRendererObj.getStringWidth(menu2)/2, posY - 10, 14737632);
-      }
-      fontRendererObj.drawString(menu1, posX + 45 - fontRendererObj.getStringWidth(menu1)/2, posY - 10, 3158064);
+
+    drawTexturedModalRect(posX + 3, posY - 16, 0, 237, 84, 19); //Menu1 Button
+    if(isMouseOver(mouseX, mouseY,posX + 88, posY - 16, 84, 19)) {
+      drawTexturedModalRect(posX + 88, posY - 16, 168, 237, 84, 19); //Menu2 Button
+      fontRendererObj.drawStringWithShadow(menu2, posX + 130 - (float) fontRendererObj.getStringWidth(menu2)/2, posY - 10, 16777120);
     } else {
-      drawTexturedModalRect(posX + 88, posY - 16, 0, 237, 84, 19); //Menu2 Button
-      if(isMouseOver(mouseX, mouseY,posX + 3, posY - 16, 84, 19)) {
-        drawTexturedModalRect(posX + 3, posY - 16, 168, 237, 84, 19); //Menu1 Button
-        fontRendererObj.drawStringWithShadow(menu1, posX + 45 - fontRendererObj.getStringWidth(menu1)/2, posY - 10, 16777120);
-      } else {
-        drawTexturedModalRect(posX + 3, posY - 16, 84, 237, 84, 19); //Menu1 Button
-        fontRendererObj.drawStringWithShadow(menu1, posX + 45 - fontRendererObj.getStringWidth(menu1)/2, posY - 10, 14737632);
-      }
-      fontRendererObj.drawString(menu2, posX + 130 - fontRendererObj.getStringWidth(menu2)/2, posY - 10, 3158064);
+      drawTexturedModalRect(posX + 88, posY - 16, 84, 237, 84, 19); //Menu2 Button
+      fontRendererObj.drawStringWithShadow(menu2, posX + 130 - (float) fontRendererObj.getStringWidth(menu2)/2, posY - 10, 14737632);
     }
+    fontRendererObj.drawString(menu1, posX + 45 - fontRendererObj.getStringWidth(menu1)/2, posY - 10, 3158064);
 
 
-    String text = ((false) ? "Pings party" : "Parties") + (VERSION.equals(GitVersion) ? "" : ". §4§lUpdate to " + GitVersion + "!");
+    String text = "Pings party" + (VERSION.equals(GitVersion) ? "" : ". §4§lUpdate to " + GitVersion + "!");
     String text1 = "Player list";
     fontRendererObj.drawString(text, (rwidth/2 - fontRendererObj.getStringWidth(text) / 2), posY+9, 3158064); //Title
-    if(false) {
-      fontRendererObj.drawString("hide", rwidth / 2 + 15, posY + 52, 3158064);
-      if (!isInParty) fontRendererObj.drawString("random", rwidth / 2 + 49, posY + 52, 3158064);
+    //posX + menuX - 38, posY + 28
+    fontRendererObj.drawString("hide", posX + menuX - 25, posY + 30, 3158064); //Hide checkmark text
+    partyNameField.drawTextBox();
+    if (!isInParty) fontRendererObj.drawString("random", rwidth / 2 + 45, posY + 52, 3158064); //Random checkmark text
+    joinButton.enabled = (!partyName.equals("Your party id") && partyName.length() >= 3);
 
-      partyNameField.drawTextBox();
-      joinButton.enabled = (!partyName.equals("Your party id") && partyName.length() >= 3);
+    if (isInParty) {
+      fontRendererObj.drawString(text1, (rwidth / 2 - fontRendererObj.getStringWidth(text1) / 2), posY + 72, 3158064);
+      int i = 0;
+      enableButtons = partyPlayers.toArray()[0].equals(mc.thePlayer.getName());
+      for (String s : partyPlayers) {
+        int xpos = posX + 7;
+        int ypos = posY + 82 + 13 * i;
+        GlStateManager.color(255, 255, 255, 255);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pingsmenugui.png"));
+        drawTexturedModalRect(xpos, ypos, 0, 222, 120, 12);
+        if (enableButtons && !Objects.equals(s, mc.thePlayer.getName())) {
+          if (isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12))
+            drawTexturedModalRect(xpos + 123, ypos, 200, 32, 12, 12); //Ban button
+          else drawTexturedModalRect(xpos + 123, ypos, 188, 32, 12, 12); //Ban button
+          if (isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12))
+            drawTexturedModalRect(xpos + 136, ypos, 200, 32, 12, 12); // Kick button
+          else drawTexturedModalRect(xpos + 136, ypos, 188, 32, 12, 12); // Kick button
+          if (isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12))
+            drawTexturedModalRect(xpos + 149, ypos, 200, 32, 12, 12); // Promote button
+          else drawTexturedModalRect(xpos + 149, ypos, 188, 32, 12, 12); // Promote button
 
-      if (isInParty) {
-        fontRendererObj.drawString(text1, (rwidth / 2 - fontRendererObj.getStringWidth(text1) / 2), posY + 72, 3158064);
-        int i = 0;
-        enableButtons = partyPlayers.toArray()[0].equals(mc.thePlayer.getName());
-        for (String s : partyPlayers) {
-          int xpos = posX + 7;
-          int ypos = posY + 82 + 13 * i;
-          GlStateManager.color(255, 255, 255, 255);
-          Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pingsmenugui.png"));
-          drawTexturedModalRect(xpos, ypos, 0, 222, 120, 12);
-          if (enableButtons && !Objects.equals(s, mc.thePlayer.getName())) {
-            if (isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12))
-              drawTexturedModalRect(xpos + 123, ypos, 200, 32, 12, 12); //Ban button
-            else drawTexturedModalRect(xpos + 123, ypos, 188, 32, 12, 12); //Ban button
-            if (isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12))
-              drawTexturedModalRect(xpos + 136, ypos, 200, 32, 12, 12); // Kick button
-            else drawTexturedModalRect(xpos + 136, ypos, 188, 32, 12, 12); // Kick button
-            if (isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12))
-              drawTexturedModalRect(xpos + 149, ypos, 200, 32, 12, 12); // Promote button
-            else drawTexturedModalRect(xpos + 149, ypos, 188, 32, 12, 12); // Promote button
+          drawTexturedModalRect(xpos + 124, ypos + 1, 188, 44, 10, 10); //Ban button
+          drawTexturedModalRect(xpos + 137, ypos + 1, 198, 44, 10, 10); // Kick button
+          drawTexturedModalRect(xpos + 150, ypos + 1, 208, 44, 10, 10); // Promote button
+        } else {
+          drawTexturedModalRect(xpos + 123, ypos, 212, 32, 12, 12); //Ban button
+          drawTexturedModalRect(xpos + 136, ypos, 212, 32, 12, 12); // Kick button
+          drawTexturedModalRect(xpos + 149, ypos, 212, 32, 12, 12); // Promote button
 
-            drawTexturedModalRect(xpos + 124, ypos + 1, 188, 44, 10, 10); //Ban button
-            drawTexturedModalRect(xpos + 137, ypos + 1, 198, 44, 10, 10); // Kick button
-            drawTexturedModalRect(xpos + 150, ypos + 1, 208, 44, 10, 10); // Promote button
-          } else {
-            drawTexturedModalRect(xpos + 123, ypos, 212, 32, 12, 12); //Ban button
-            drawTexturedModalRect(xpos + 136, ypos, 212, 32, 12, 12); // Kick button
-            drawTexturedModalRect(xpos + 149, ypos, 212, 32, 12, 12); // Promote button
-
-            drawTexturedModalRect(xpos + 124, ypos + 1, 218, 44, 10, 10); //Ban button
-            drawTexturedModalRect(xpos + 137, ypos + 1, 228, 44, 10, 10); // Kick button
-            drawTexturedModalRect(xpos + 150, ypos + 1, 238, 44, 10, 10); // Promote button
-          }
-
-          fontRendererObj.drawString(s, xpos + 3, ypos + 2, 16777215, true);
-          i++;
-          if (isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12)) {
-            drawHoveringText(Collections.singletonList("Ban player"), mouseX, mouseY, fontRendererObj);
-          } else if (isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12)) {
-            drawHoveringText(Collections.singletonList("Kick player"), mouseX, mouseY, fontRendererObj);
-          } else if (isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12)) {
-            drawHoveringText(Collections.singletonList("Promote player"), mouseX, mouseY, fontRendererObj);
-          }
-          GlStateManager.disableLighting();
+          drawTexturedModalRect(xpos + 124, ypos + 1, 218, 44, 10, 10); //Ban button
+          drawTexturedModalRect(xpos + 137, ypos + 1, 228, 44, 10, 10); // Kick button
+          drawTexturedModalRect(xpos + 150, ypos + 1, 238, 44, 10, 10); // Promote button
         }
+
+        fontRendererObj.drawString(s, xpos + 3, ypos + 2, 16777215, true);
+        i++;
+        if (isMouseOver(mouseX, mouseY, xpos + 123, ypos, 12, 12)) {
+          drawHoveringText(Collections.singletonList("Ban player"), mouseX, mouseY, fontRendererObj);
+        } else if (isMouseOver(mouseX, mouseY, xpos + 136, ypos, 12, 12)) {
+          drawHoveringText(Collections.singletonList("Kick player"), mouseX, mouseY, fontRendererObj);
+        } else if (isMouseOver(mouseX, mouseY, xpos + 149, ypos, 12, 12)) {
+          drawHoveringText(Collections.singletonList("Promote player"), mouseX, mouseY, fontRendererObj);
+        }
+        GlStateManager.disableLighting();
       }
     }
     Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(MOD_ID, "textures/gui/pingsmenugui.png"));
@@ -234,6 +213,10 @@ public class PartyGUI extends GuiScreen {
   protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
     super.mouseClicked(mouseX, mouseY, mouseButton);
     partyNameField.mouseClicked(mouseX, mouseX, mouseButton);
+    if (isMouseOver(mouseX, mouseY, posX + 88, posY - 16, 84, 19)) {
+      mc.displayGuiScreen(new PublicPartiesGUI());
+      mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+    }
     if (isMouseOver(mouseX, mouseY, partyNameField.xPosition, partyNameField.yPosition, partyNameField.width, partyNameField.height)) partyNameField.setFocused(true);
     int i = 0;
     if (isInParty && enableButtons) {
@@ -259,10 +242,10 @@ public class PartyGUI extends GuiScreen {
 
   @Override
   protected void keyTyped(char typedChar, int keyCode) throws IOException {
-    super.keyTyped(typedChar, keyCode);
     if (partyNameField.isFocused()) {
       partyNameField.textboxKeyTyped(typedChar, keyCode);
       partyName = partyNameField.getText();
     }
+    super.keyTyped(typedChar, keyCode);
   }
 }

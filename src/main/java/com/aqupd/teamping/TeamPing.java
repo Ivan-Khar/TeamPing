@@ -31,6 +31,7 @@ public class TeamPing {
 	public static int playerCount = 0;
 	public static boolean hidetext = false;
 	public static boolean isInParty = false;
+	public static boolean isPartyPublic = false;
 	public static ArrayList<String> partyPlayers = new ArrayList<>();
 	public static OutputStream outputStream;
 	private final EventListener eventListener;
