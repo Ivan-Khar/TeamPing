@@ -2,9 +2,5 @@
   "package": "com.aqupd.teamping.mixins",
   "refmap": "mixins.teamping.refmap.json",
   "compatibilityLevel": "JAVA_8",
-  "client": [
-    "GlobalRendererMixin",
-    "GuiScreenMixin",
-    "MinecraftMixin"
-  ]
+  "client": []
 }
